@@ -1,0 +1,14 @@
+# Filled brand and audience. The shared files stay blank.
+brand.local
+audience.local
+.banned-terms.local
+
+# Renders, frames, .blend files and other local work.
+work/
+*.blend
+*.blend1
+
+node_modules/
+__pycache__/
+*.pyc
+.DS_Store

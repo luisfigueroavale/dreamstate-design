@@ -1,0 +1,18 @@
+{
+  "name": "dreamstate-design",
+  "private": true,
+  "type": "module",
+  "description": "Dreamstate graphic design: 2D frames and a scripted 3D lane in Blender.",
+  "license": "MIT",
+  "scripts": {
+    "check": "node scripts/check.mjs",
+    "test": "node --test 2d/funnel/scripts/frame-page.test.mjs 2d/funnel/skills/draw-process-map/scripts/map-check.test.mjs",
+    "still": "node 2d/funnel/scripts/render-still.mjs",
+    "capture": "node 2d/funnel/scripts/capture-motion.mjs",
+    "3d:clay": "3d/scripts/render.sh signal-funnel clay still",
+    "3d:final": "3d/scripts/render.sh signal-funnel final still"
+  },
+  "dependencies": {
+    "playwright": "^1.49.0"
+  }
+}
