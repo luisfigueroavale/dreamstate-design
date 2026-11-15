@@ -12,7 +12,7 @@ Graphic design for the Dreamstate GTM team, in 2D and 3D. HTML frames and templa
 |---|---|
 | [docs/](docs/start-here.md) | Start here, rules, best practices, the 3D playbook |
 | [brand/](brand/AGENTS.md) | Blank brand forms, including the 3D palette. The filled copy is `brand.local/`, never committed |
-| [2d/](2d/README.md) | Copies of the gtm-team and funnel design material: templates, frame shells, render scripts, 8 visual skills |
+| [2d/](2d/README.md) | Copied gtm-team and funnel templates, frame shells and render scripts, plus 9 visual skills including our own `viral-gif-studio` |
 | [3d/](3d/README.md) | Our Blender lane: helper library, scripted scenes, render, GIF, MP4 and seam scripts, prompts, review checklist, bridge setup |
 | [skills/](skills/README.md) | `build-3d-scene`, `rebrand-3d-scene`, `review-3d-render` |
 | [setup-prompt.md](setup-prompt.md) | Paste into the Graphic Designer bot to point it at this repo |

@@ -10,7 +10,7 @@ The Graphic Designer seat in [dreamstate-gtm-team](https://github.com/luisfiguer
 
 1. [brand/AGENTS.md](../brand/AGENTS.md), then the filled `brand.local/` files it names.
 2. [docs/rules.md](rules.md) and [docs/best-practices.md](best-practices.md).
-3. For 2D: [2d/README.md](../2d/README.md).
+3. For 2D: [2d/README.md](../2d/README.md) and [Viral GIF Studio lessons](lessons/viral-gif-studio.md).
 4. For 3D: [docs/3d-playbook.md](3d-playbook.md) and [3d/README.md](../3d/README.md).
 5. Before handing anything over: `brand/taste.md`, and for 3D `3d/checklists/3d-review.md`.
 

@@ -56,3 +56,5 @@ None. Local files only.
 - Do not call that file rendered.
 
 - Do not publish.
+
+Related: [viral-gif-studio](../viral-gif-studio/SKILL.md) builds dense animated reference sheets with a sculptural hero and several meaningful motions.
