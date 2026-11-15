@@ -49,3 +49,77 @@ h1 em { font-style: normal; background: linear-gradient(90deg, #1450D9, #4A86F7)
 .cta kbd { font: 800 19px Inter, system-ui, sans-serif; background: #fff; color: #1450D9; border-radius: 9px; padding: 3px 10px; }
 .cta .ring { position: absolute; inset: 0; border-radius: 999px; border: 2px solid #4A86F7; }
 svg.layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; overflow: visible; }
+
+/* House frame (set Nov 15, 2026). Historical examples keep the styles above. */
+body.house-frame {
+  background: #fff;
+  color: #0B1B45;
+}
+.house-frame h1 em {
+  background: linear-gradient(90deg, #12B2F8, #4E63F9);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.house-frame .sub { color: #6B7280; }
+.house-banner {
+  position: absolute;
+  left: 40px;
+  right: 40px;
+  bottom: 34px;
+  height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 26px;
+  border-radius: 24px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+}
+.house-banner .who {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-weight: 800;
+  font-size: 20px;
+}
+.house-banner .who img {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: none;
+}
+.house-banner .cta-line {
+  font-size: 21px;
+  font-weight: 700;
+  color: #0B1B45;
+}
+[data-word-pill] {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 6px;
+  padding: 3px 10px;
+  border-radius: 999px;
+  background: #fff;
+  color: #4E63F9;
+  font: 800 19px Inter, system-ui, sans-serif;
+  --word-pulse: 0.5;
+  --word-ring-angle: 0deg;
+  box-shadow: 0 0 calc(8px + 16px * var(--word-pulse)) rgba(18, 178, 248, calc(0.2 + 0.45 * var(--word-pulse)));
+}
+[data-word-pill]::after {
+  content: "";
+  position: absolute;
+  inset: -3px;
+  border-radius: inherit;
+  padding: 3px;
+  background: conic-gradient(from var(--word-ring-angle), #12B2F8, #4E63F9, #12B2F8);
+  -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  -webkit-mask-composite: xor;
+  mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
+  mask-composite: exclude;
+  pointer-events: none;
+}

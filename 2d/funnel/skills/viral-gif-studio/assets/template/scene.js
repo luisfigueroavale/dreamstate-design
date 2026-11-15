@@ -70,7 +70,21 @@
     }
     document.title = 'rec done';
   }
+
+  // House frame: fill [data-word] from window.WORD and pulse or rotate the pill ring only.
+  function bindHouseFrame() {
+    const word = (typeof window.WORD === 'string' && window.WORD.trim()) ? window.WORD.trim() : '';
+    if (word) document.querySelectorAll('[data-word]').forEach((el) => { el.textContent = word; });
+    const pill = document.querySelector('[data-word-pill]');
+    if (!pill) return;
+    window.S.scenes.push((t) => {
+      const pulse = 0.5 - 0.5 * Math.cos(window.S.TAU * (t / 2));
+      pill.style.setProperty('--word-pulse', pulse.toFixed(3));
+      pill.style.setProperty('--word-ring-angle', `${((t / 4) * 360) % 360}deg`);
+    });
+  }
   window.addEventListener('load', () => {
+    bindHouseFrame();
     const rec = location.search.match(/rec=(\d+)/);
     if (rec) { record(+rec[1]).catch((e) => (document.title = 'rec error ' + e)); return; }
     if (/capture/.test(location.search)) { window.__seek(0); return; }

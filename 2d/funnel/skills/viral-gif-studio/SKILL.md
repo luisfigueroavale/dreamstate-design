@@ -8,17 +8,31 @@ Turn a post idea into a dense, looping 4:5 reference sheet that people save and 
 
 ## House rules override the kit
 
-- Brand colors and tokens come from `brand/` and the filled `brand.local/`, never the kit palette. Read the repo's `brand/AGENTS.md` first.
+- Brand colors and tokens come from `brand/` and the filled `brand.local/`, never the kit palette. Read the repo's `brand/AGENTS.md` first. The title key phrase uses the house title gradient `#12B2F8` to `#4E63F9` (set Nov 15, 2026). That is the house gradient, not a kit color. All other colors still come from the brand files.
 - No metric on an image without a source you can name, including sample UI numbers.
 - Builds reveal top-down, 01 first.
 - No line, underline or packet sweeps across text. Keep tracks and moving shapes clear of labels.
 - Luis's portrait is cropped only. Keep its exact colors through the GIF palette. Do not retouch, recolor, filter or regenerate his face. Verify those colors in the encoded file.
-- No third-party logos unless supplied, no long dashes, no engagement bait.
+- No third-party logos unless supplied, no long dashes, no engagement bait. The banner line "Comment WORD to get it" is the one sanctioned call to action. Nothing else on the piece may ask for likes, shares or comments.
 - Motion starts only after the still is accepted.
 - Keep the editable source and do a 390px phone check.
 - Never upload, attach or publish without Luis's yes on that exact item.
 
-The bundled pages and GIFs are historical examples of structure and recording, not approved copy, claims, logos or brand tokens. Apply these rules before adapting them. Do not carry their comment prompts into a new piece.
+The bundled pages and GIFs are historical examples of structure and recording, not approved copy, claims, logos or brand tokens. Apply these rules and the house frame before adapting them. Historical examples may include other comment or tag prompts. Do not copy those. Use only the sanctioned banner CTA.
+
+## House frame (set Nov 15, 2026)
+
+Every new piece uses this frame. Historical examples may not match it. Do not copy their chrome.
+
+1. White, clean background. No tinted wash, no dot grid, and no dark theme.
+2. The Dreamstate logo at the top, from a supplied logo file.
+3. A big title with the key phrase in the house title gradient, `#12B2F8` to `#4E63F9`, plus a short gray subtitle.
+4. The hero graphic in the middle.
+5. A clean bottom banner. On the left, Luis's photo (cropped only, exact colors kept through the GIF palette) with the label "Luis Vale / Dreamstate". On the right, the line "Comment WORD to get it", where WORD (for example BOT) sits in a highlighted pill. The pill has a looping animation around it: a glow pulse or a rotating gradient border. That motion is a pure function of `t`, with a period that divides eight seconds, and it never sweeps across other text.
+
+WORD is a single variable at the top of the HTML, for example `window.WORD = "BOT";`. The template fills every `[data-word]` node from that variable and drives the pill ring in `assets/template/scene.js`. Do not hard-code the keyword in more than that one place.
+
+How this sits with the house rules: brand colors still come from the brand files, never the kit palette. The two hex values above are the house title gradient for the title key phrase. They are not kit leftovers. All other colors stay with the brand files. "No engagement bait" still holds. The banner CTA is the one sanctioned call to action, and nothing else may ask for likes, shares or comments.
 
 ## What makes a strong piece
 
@@ -26,14 +40,14 @@ The bundled pages and GIFs are historical examples of structure and recording, n
 2. Six to ten meaningful motions: work travelling along tracks, signals arriving, a typing terminal, approvals, bars and checklists. Each must explain something.
 3. Four to eight numbered sections with short labels and notes, plus a four-step playbook strip.
 4. Concrete details backed by named sources. Use text chips when no logo was supplied.
-5. A consistent Dreamstate header, title, subtitle and footer. Use a useful next step without a comment or tag prompt.
+5. A consistent Dreamstate house frame: white ground, logo at the top, gradient title, hero, and the banner described above.
 6. Soft cards, restrained shadows and one accent family from the brand files.
 
 ## Workflow
 
 ### 1. Brief
 
-Collect only what is missing: topic, hook, four to eight sections, sources for every metric, supplied assets, a useful next step and light or dark treatment. Read the filled brand files rather than choosing colors from the examples. `references/example-briefs.md` shows the original briefs; their claims need fresh source checks.
+Collect only what is missing: topic, hook, four to eight sections, sources for every metric, supplied assets, and the WORD keyword for the banner CTA. New pieces use the white house frame, not a dark theme. Read the filled brand files rather than choosing colors from the examples, and use the house title gradient on the key phrase. `references/example-briefs.md` shows the original briefs; their claims need fresh source checks.
 
 ### 2. Pick a hero and plan the still
 
@@ -41,7 +55,7 @@ Choose a hero from `references/motion-patterns.md`. Lay out the full reference s
 
 ### 3. Build and accept the still
 
-Keep new work under the repo's uncommitted `work/` folder. Copy `assets/template/scene.js` and `assets/template/base.css` beside a new page. When copying an example there, change its stylesheet and script links to `base.css` and `scene.js`. Replace the example palette with brand tokens and literals from the filled brand files.
+Keep new work under the repo's uncommitted `work/` folder. Copy `assets/template/scene.js` and `assets/template/base.css` beside a new page. When copying an example there, change its stylesheet and script links to `base.css` and `scene.js`. Apply the house frame, replace the example palette with brand tokens and literals from the filled brand files, and use the house title gradient on the key phrase.
 
 Serve the page as described in `references/pipeline.md` and open it with `?capture`. Compose the still with `window.__seek(1.9)`. Check wrapping, collisions, clipping and readability at 390px phone width. Keep the editable HTML, CSS and JS. Get the still accepted before adding motion.
 

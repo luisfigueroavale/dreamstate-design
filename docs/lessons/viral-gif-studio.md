@@ -20,4 +20,18 @@ Motion is a pure function of `t`. Every period divides the eight-second loop, su
 
 Keep the editable source and check the layout at 390px phone width. Brand files, named metric sources and exact supplied portrait colors take priority over the examples.
 
+## House frame (set Nov 15, 2026)
+
+New pieces use a fixed frame:
+
+1. White, clean background. No tinted wash, no dot grid, and no dark theme.
+2. The Dreamstate logo at the top, from a supplied logo file.
+3. A big title with the key phrase in the house title gradient, `#12B2F8` to `#4E63F9`, plus a short gray subtitle.
+4. The hero graphic in the middle.
+5. A clean bottom banner. On the left, Luis's photo (cropped only, exact colors kept through the GIF palette) with "Luis Vale / Dreamstate". On the right, "Comment WORD to get it", with WORD (for example BOT) in a highlighted pill. A glow pulse or a rotating gradient border loops around that pill only. The motion is a pure function of `t`, its period divides eight seconds, and it never sweeps across other text.
+
+WORD is a single variable at the top of the HTML, such as `window.WORD = "BOT";`. Fill the pill from that variable. Do not hard-code the keyword in more than one place.
+
+This sits with the house rules as follows. Brand colors still come from the brand files, never the kit palette. The two hex values are the house title gradient for the title key phrase, not kit leftovers. All other colors stay with the brand files. "No engagement bait" still holds. The banner line is the one sanctioned call to action. Nothing else may ask for likes, shares or comments.
+
 The [skill folder](../../2d/funnel/skills/viral-gif-studio/SKILL.md) holds the workflow, [pipeline](../../2d/funnel/skills/viral-gif-studio/references/pipeline.md), templates and [examples](../../2d/funnel/skills/viral-gif-studio/assets/examples/).
