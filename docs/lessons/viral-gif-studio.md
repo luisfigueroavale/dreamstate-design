@@ -35,3 +35,16 @@ WORD is a single variable at the top of the HTML, such as `window.WORD = "BOT";`
 This sits with the house rules as follows. Brand colors still come from the brand files, never the kit palette. The two hex values are the house title gradient for the title key phrase, not kit leftovers. All other colors stay with the brand files. "No engagement bait" still holds. The banner line is the one sanctioned call to action. Nothing else may ask for likes, shares or comments.
 
 The [skill folder](../../2d/funnel/skills/viral-gif-studio/SKILL.md) holds the workflow, [pipeline](../../2d/funnel/skills/viral-gif-studio/references/pipeline.md), templates and [examples](../../2d/funnel/skills/viral-gif-studio/assets/examples/).
+
+## Nov 15 2026
+
+The shared-brain system graphic was the best result so far. The final piece is named d3-v2 and is attached to the Nov 16 LinkedIn draft. The working reference lives at [examples/shared-brain](../../2d/funnel/skills/viral-gif-studio/examples/shared-brain/).
+
+- Flat 2D beat 3D and isometric for this kind of system graphic. Put the brain panel in the center, ringed by 6 to 8 framed sections.
+- Show all 16 seats by name, each with its own mini scene.
+- Each bot works in its frame, flies to the brain carrying a doc chip, uploads (the brain lights up in its color and the matching doc row shows +1), then flies back. Stagger departures so many things happen at once.
+- Fold name pills while bots fly.
+- Drive the motion from a spec file.
+- Run an automated frame check for overlaps, crossing lines, text under 15px and cursors resting on text.
+- Keep row heights fixed so the loop seam does not jump.
+- Prefer the MP4 for exact photo colors. The committed example includes the GIF and a still, not the MP4.

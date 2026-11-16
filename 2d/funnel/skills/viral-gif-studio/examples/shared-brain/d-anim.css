@@ -1,0 +1,21 @@
+/* d3a motion layer (Nov 15 2026): bot head + pill tags, typing caret, dashed active rows, doc badges, pulses. */
+.tag { display: inline-flex; align-items: center; gap: 3px; flex: none; will-change: transform; }
+.tag .ar { display: block; margin-top: -8px; }
+.tag .hd2 { display: block; }
+.tag .pill { transition: none; }
+.r { position: relative; outline: 1.5px dashed transparent; outline-offset: -1px; }
+.l1 .tx { white-space: pre; }
+.cr { display: inline-block; width: 2px; height: 18px; background: #FFFFFF; margin-left: 1px; vertical-align: -3px; }
+.chip.on { background: var(--c); color: #0B0B0F; }
+.doc { overflow: visible !important; }
+.bd { position: absolute; min-width: 26px; height: 20px; border-radius: 10px; font-size: 15px; line-height: 20px; font-weight: 800;
+  text-align: center; color: #0B0B0F; padding: 0 5px; opacity: 0; }
+.mbox .mt .tx { white-space: pre; }
+.r .l1, .mbox .mt { height: 22px; } .cr { vertical-align: middle; }
+/* v2 floating bots */
+#bots { z-index: 5; pointer-events: none; }
+.fb { position: absolute; left: 0; top: 0; display: inline-flex; align-items: center; gap: 3px; white-space: nowrap; will-change: transform; filter: drop-shadow(0 3px 5px rgba(0,0,0,.55)); }
+.fb .ar { display: block; margin-top: -8px; }
+.fb .pw { display: inline-block; overflow: hidden; }
+.fb .pill { display: inline-block; font-size: 15px; line-height: 22px; font-weight: 700; padding: 0 9px; border-radius: 999px; white-space: nowrap; }
+.fb .dc { display: block; flex: none; }

@@ -1,0 +1,53 @@
+/* A-brain-2d kit (Nov 15 2026): FLAT 2D Grok Bot dashboard inside the white house page.
+   Rules: text >= 15px at 1080, no blue or green bots (teardowns/A-seat-map.md), dashed elbow connectors never cross text or each other. */
+.hf-title { top: 96px; font-size: 76px; }
+.hf-sub { top: 190px; font-size: 25px; }
+#scene { position: absolute; left: 24px; top: 238px; width: 1032px; height: 970px; border-radius: 28px; background: #0A0A0D;
+  box-shadow: 0 24px 60px rgba(10,10,15,.22), 0 0 0 1px #000; color: #EDEDF2; overflow: hidden; }
+#scene .tb { position: absolute; left: 22px; right: 22px; top: 0; height: 58px; display: flex; align-items: center; gap: 12px; }
+.tb .dots { display: flex; gap: 7px; margin-right: 6px; } .tb .dots i { width: 12px; height: 12px; border-radius: 50%; background: #2E2E36; display: block; }
+.tb h3 { margin: 0; font-size: 19px; font-weight: 750; white-space: nowrap; }
+.tb .ex { font-size: 15px; font-weight: 700; color: #A1A1AA; border: 1px dashed #52525B; border-radius: 999px; padding: 2px 11px; white-space: nowrap; }
+.tb .heads { margin-left: auto; flex: none; }
+.tb .live { font-size: 15px; color: #D4D4D8; font-weight: 650; white-space: nowrap; display: flex; align-items: center; gap: 7px; }
+.tb .live i { width: 9px; height: 9px; border-radius: 50%; background: #12B2F8; }
+#scene .rule { position: absolute; left: 0; right: 0; top: 58px; height: 1px; background: #1E1E25; }
+svg.wires { position: absolute; left: 0; top: 0; width: 1032px; height: 970px; overflow: visible; pointer-events: none; }
+/* section card */
+.card { position: absolute; background: #121217; border: 1px solid #27272F; border-radius: 18px; padding: 14px 14px 12px; }
+.card .hd { display: flex; align-items: center; gap: 10px; height: 30px; font-size: 19px; font-weight: 750; letter-spacing: -.01em; white-space: nowrap; }
+.card .hd .sq { width: 28px; height: 28px; border-radius: 8px; background: var(--c); display: grid; place-items: center; flex: none; }
+.card .hd .meta { margin-left: auto; font-size: 15px; font-weight: 600; color: #8A8A96; }
+.r { margin-top: 8px; padding: 6px 11px; border-radius: 12px; background: #18181F; border: 1px solid #25252D; }
+.r .l1 { font-size: 16px; line-height: 22px; font-weight: 550; color: #F1F1F5; white-space: nowrap; display: flex; align-items: center; gap: 6px; }
+.r .l2 { display: flex; align-items: center; gap: 8px; margin-top: 4px; height: 24px; }
+.r .st { margin-left: auto; font-size: 15px; color: #8A8A96; font-weight: 600; white-space: nowrap; }
+.who { display: inline-flex; align-items: center; gap: 3px; flex: none; }
+.who svg { display: block; margin-top: -8px; }
+.pill { font-size: 15px; line-height: 22px; font-weight: 700; padding: 0 9px; border-radius: 999px; white-space: nowrap; }
+.chip { font-size: 15px; line-height: 20px; font-weight: 700; padding: 0 7px; border-radius: 7px; border: 1px solid var(--c); color: var(--c); white-space: nowrap; }
+.mut { color: #8A8A96; }
+/* center brain panel */
+.core { position: absolute; background: #101015; border: 1.5px solid #2C2C36; border-radius: 22px; padding: 14px; }
+.core .hd { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 800; height: 30px; white-space: nowrap; }
+.core .hd .meta { margin-left: auto; font-size: 15px; color: #8A8A96; font-weight: 600; }
+.doc { position: absolute; height: 42px; border-radius: 11px; background: #18181F; border: 1px solid #2A2A33; display: flex; align-items: center; gap: 10px; padding: 0 12px; font-size: 16px; font-weight: 650; white-space: nowrap; }
+.doc .fi { width: 18px; height: 22px; border-radius: 3px; background: #2A2A33; position: relative; flex: none; }
+.doc .fi::after { content: ''; position: absolute; left: 4px; right: 4px; top: 6px; height: 2px; background: #6B6B78; box-shadow: 0 5px 0 #6B6B78, 0 10px 0 #6B6B78; }
+.doc .new { margin-left: auto; font-size: 15px; font-weight: 700; color: #7DD3FC; }
+.box2 { position: absolute; border-radius: 14px; background: #15151B; border: 1px solid #2A2A33; padding: 10px 12px; }
+.box2 .t { font-size: 16px; font-weight: 750; display: flex; align-items: center; gap: 8px; white-space: nowrap; }
+.term { font: 500 15px/22px 'JetBrains Mono', ui-monospace, monospace; color: #D4D4D8; white-space: pre; margin-top: 6px; }
+.term .k { color: #FDE047; } .term .w { color: #FFFFFF; font-weight: 700; }
+.btn { font-size: 15px; font-weight: 800; padding: 3px 12px; border-radius: 9px; background: #FFFFFF; color: #0B0B0F; white-space: nowrap; }
+
+.mbox { margin-top: 8px; border-radius: 12px; background: #0E0E12; border: 1.5px solid var(--c); padding: 8px 11px; }
+.mbox .mh { display: flex; align-items: center; gap: 6px; font-size: 16px; font-weight: 650; white-space: nowrap; padding-bottom: 6px; border-bottom: 1px solid #25252D; }
+.mbox .mh .mut { font-size: 15px; font-weight: 600; }
+.mbox .mt { font-size: 16px; line-height: 22px; margin-top: 7px; color: #F1F1F5; white-space: nowrap; display: flex; align-items: center; }
+.caret { width: 2px; height: 18px; background: #FFFFFF; display: inline-block; margin-left: 2px; }
+.mbox .mf { display: flex; align-items: center; margin-top: 9px; gap: 8px; }
+.mbox .st { margin-left: auto; font-size: 15px; color: #8A8A96; font-weight: 600; white-space: nowrap; }
+.bus { position: absolute; left: 18px; top: 330px; width: 996px; height: 28px; border-radius: 10px; background: linear-gradient(90deg, #12B2F8, #4E63F9);
+  display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 15px; font-weight: 800; color: #FFFFFF; white-space: nowrap; }
+.box2 .t svg, .doc svg { flex: none; }
