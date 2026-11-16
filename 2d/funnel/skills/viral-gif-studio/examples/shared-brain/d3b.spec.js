@@ -1,0 +1,286 @@
+// d3b (v2, Nov 15 2026): d3a + every Grok Bot leaves its section, carries a doc chip to the brain, uploads, and returns.
+// Based on d3a: the animated d3 (Luis picked d3, Nov 15 2026). Same ring layout as d3. Every motion is a pure function of t in [0,8).
+// Build 0 to ~5.6 s (top row first), steady hold, then a 0.55 s soft reset so frame 119 flows into frame 0.
+// Bots: arrow cursor + Grok Bot head + name pill. Cursors follow their typing caret on the line above (never over text),
+// press on clicks, bob when idle. Pulses run along the dashed wires into the brain, light its nodes, and flash "+1" on a doc row.
+const $$ = (q) => [...document.querySelectorAll(q)];
+const { clamp, ease, frac } = S;
+const HOLD_END = 7.35, RESET = 0.55; // reset window [7.35, 7.9], then empty until 8 (== t 0)
+const out = (t) => 1 - ease((t - HOLD_END) / RESET); // 1 during the loop, fades to 0 in the reset window
+const on = (t, at, d = 0.25) => (t < at ? 0 : ease((t - at) / d)) * out(t); // 0 -> 1 at time `at`, back to 0 in reset
+const wrap = (t, at) => ((t - at) % 8 + 8) % 8; // seconds since `at`, periodic
+
+function headT(x, y, c, t, ph, sc = 1) { // Grok Bot head, blinks once every 4 s (periodic in 8)
+  const blink = frac(t / 4 + ph) > 0.955, w = 24 * sc, h = 20 * sc;
+  return `<rect x="${x - w / 2}" y="${y - h / 2}" width="${w}" height="${h}" rx="${7 * sc}" fill="${c}" stroke="#0B0B0F" stroke-width="${1.5 * sc}"/>` +
+    (blink ? `<rect x="${x - 6 * sc}" y="${y - 1}" width="${4 * sc}" height="2" fill="#0B0B0F"/><rect x="${x + 2 * sc}" y="${y - 1}" width="${4 * sc}" height="2" fill="#0B0B0F"/>`
+      : `<rect x="${x - 5.5 * sc}" y="${y - 4.5 * sc}" width="${3.6 * sc}" height="${8.5 * sc}" rx="${1.8 * sc}" fill="#0B0B0F"/><rect x="${x + 1.9 * sc}" y="${y - 4.5 * sc}" width="${3.6 * sc}" height="${8.5 * sc}" rx="${1.8 * sc}" fill="#0B0B0F"/>`);
+}
+const arrowSvg = (c) => `<svg class="ar" width="16" height="20" viewBox="0 0 16 20"><path d="M2 1.5v15l3.8-3.6 2.8 6 2.6-1.2-2.8-5.8H14z" fill="${c}" stroke="#0B0B0F" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+const tag = (k, label) => `<span class="tag" data-k="${k}">${arrowSvg(C(k))}${k === 'luis' ? '' : `<svg class="hd2" width="22" height="20" data-head="${k}"></svg>`}<span class="pill" style="background:${C(k)};color:${SEATS[k][2]}">${label || SEATS[k][0]}</span></span>`;
+
+// rows: {id,k,t(static html) | ty(typed text, at, d), pre(static prefix before typed), s(status), sAt, chips:[[label,at]], appear}
+function rowA(r) {
+  const l1 = r.ty != null ? `${r.pre || ''}<span class="tx" data-full="${r.ty}"></span><span class="cr"></span>` : r.t;
+  return `<div class="r" id="${r.id}"><div class="l1">${l1}${(r.chips || []).map(([l], i) => `<span class="chip" data-i="${i}" style="--c:${r.cc || C(r.k)}">${l}</span>`).join(' ')}</div>
+    <div class="l2">${tag(r.k)}${r.s ? `<span class="st">${r.s}</span>` : ''}</div></div>`;
+}
+function cardA(s) {
+  return `<div class="card" style="left:${s.x}px;top:${s.y}px;width:${s.w}px;height:${s.h}px;--c:${s.c}">
+    <div class="hd"><span class="sq">${ico(s.ic)}</span>${s.title}${s.meta ? `<span class="meta">${s.meta}</span>` : ''}</div>${s.rows.map(rowA).join('')}${s.html || ''}</div>`;
+}
+
+const TX = [18, 358, 698], TW = 316, TY = 76, BY = 742, RH = 250, BH = 210, MY = 350, MH = 368, SW = 260, CX = 318, CW = 396;
+// ---------- the plan: who does what, when (s). Top row starts first, then middle, then bottom; many overlap. ----------
+const ROWS = {
+  sig1: { k: 'se', ty: 'Dana R. commented on a post', at: 0.25, d: 1.0, s: 'signal', sAt: 1.3 },
+  sig2: { k: 'ls', t: 'Qualified ', chips: [['fit 88', 1.6], ['✓ ICP', 1.9]], s: 'warm →', sAt: 2.15, clickAt: 1.9 },
+  acc1: { k: 'ol', t: 'Brief: warm outbound, 40/day', s: '✓', sAt: 0.7, clickAt: 0.7 },
+  seq1: { k: 'sd', t: 'DS-WARM-11 ', chips: [['D1', 3.75], ['D3', 4.05], ['D6', 4.35]], clickAt: 3.75 },
+  seq2: { k: 'sd', t: 'Mailbox ', chips: [['SPF ✓', 0.6], ['DKIM ✓', 0.9]], clickAt: 0.9 },
+  rep1: { k: 'rm', pre: 'Reply: ', ty: '“Sure, 2-min demo”', at: 4.7, d: 1.0 },
+  rep2: { k: 'dr', ty: 'Cobalt HQ follow-up', at: 0.9, d: 1.0 },
+  rep3: { k: 'ol', pre: '08:00 rollup: ', ty: '3 decisions', at: 2.3, d: 0.6 },
+  con1: { k: 'li', pre: '💡 ', ty: 'Idea → LinkedIn post', at: 1.1, d: 1.1, s: 'submitted', sAt: 2.3, clickAt: 2.3 },
+  con2: { k: 'hoc', t: 'Review ', chips: [['✓ voice', 2.8], ['✓ proof', 3.1]], s: 'to brain', sAt: 3.35, clickAt: 3.1 },
+  wri1: { k: 'xw', ty: 'X thread, 1 of 4', at: 1.5, d: 0.8, s: 'draft', sAt: 2.4 },
+  wri2: { k: 'rw', ty: 'r/sales post + rules card', at: 2.6, d: 1.1 },
+  vid1: { k: 'yt', pre: 'Script: ', ty: 'hook, demo, proof', at: 1.3, d: 1.1 },
+  vid2: { k: 'lv', t: 'Cut ', cc: C('lv'), chips: [['hook', 2.8], ['demo', 3.1], ['proof', 3.4]], s: 'beat 3/7', sAt: 3.6, clickAt: 3.4 },
+  stu1: { k: 'gd', ty: 'Infographic 1080x1350', at: 0.7, d: 1.0 },
+  stu2: { k: 'gd', ty: 'Thumbnail for the script', at: 2.6, d: 1.0 },
+  stu3: { k: 'sl', ty: 'Deck: 9 slides', at: 1.5, d: 0.7, s: '✓', sAt: 2.4, clickAt: 2.4 },
+};
+Object.entries(ROWS).forEach(([id, r]) => (r.id = id));
+const R_ = (ids) => ids.map((i) => ROWS[i]);
+const MSG = { at: 2.0, d: 1.2, text: 'Saw your comment, Dana' }; // message box typing (Outbound Copywriter)
+// uploads: wire index -> times a pulse leaves the card (each wire fires twice, staggered); doc row it lands on
+const WIRES = [
+  { c: C('ls'), pts: [[298, TY + RH], [298, 384], [CX, 384]], fire: [], doc: 1 },
+  { c: C('oc'), pts: [[516, TY + RH], [516, MY]], fire: [], doc: 0 },
+  { c: C('sd'), pts: [[734, TY + RH], [734, 384], [CX + CW, 384]], fire: [], doc: 2 },
+  { c: C('rm'), pts: [[754, 580], [CX + CW, 580]], fire: [], doc: 1 },
+  { c: C('hoc'), pts: [[734, BY], [734, 690], [CX + CW, 690]], fire: [], doc: 3 },
+  { c: C('xw'), pts: [[516, BY], [516, MY + MH]], fire: [], doc: 3 },
+  { c: C('yt'), pts: [[298, BY], [298, 690], [CX, 690]], fire: [], doc: 0 },
+  { c: C('gd'), pts: [[278, 580], [CX, 580]], fire: [], doc: 2 },
+];
+const FLOWS = [ // lead story hand-offs (solid arrows), pulse when the hand-off happens
+  { c: C('ls'), pts: [[TX[0] + TW, 150], [TX[1], 150]], fire: [2.2] },
+  { c: C('oc'), pts: [[TX[1] + TW, 150], [TX[2], 150]], fire: [3.35] },
+  { c: C('sd'), pts: [[900, TY + RH], [900, MY]], fire: [4.45] },
+  { c: '#D4D4D8', pts: [[512, 663], [520, 663]], fire: [] },
+];
+
+// ---------- roaming bots: work at home, travel through the gutters to the brain with a doc chip, upload, come back ----------
+// sel = the bot's own tag at home (kept in layout, hidden; the floating twin is drawn on top). route = which gutters it uses.
+// doc = doc row that gets "+1". side R docks at the doc row's right end (free gap), L docks on the brain's left lobe, C under the brain.
+const GT = 334, GB = 724, XL = 290, XR = 716;
+const BOTS = [
+  { k: 'se', sel: '#sig1 .tag', route: 'TL', doc: 1, side: 'L', y: 462, trips: [1.45, 5.0] },
+  { k: 'ls', sel: '#sig2 .tag', route: 'TL', doc: 1, side: 'L', y: 490, trips: [2.35, 6.4] },
+  { k: 'ol', sel: '#acc1 .tag', route: 'TM', doc: 0, side: 'R', y: 0, trips: [0.95, 4.9] },
+  { k: 'oc', sel: '#mbox .tag', route: 'TM', doc: 0, side: 'R', y: 14, trips: [3.45, 6.1] },
+  { k: 'sd', sel: '#seq1 .tag', route: 'TR', doc: 2, side: 'R', y: 0, trips: [4.5] },
+  { k: 'rm', sel: '#rep1 .tag', route: 'R', doc: 1, side: 'R', y: 14, trips: [5.8] },
+  { k: 'dr', sel: '#rep2 .tag', route: 'R', doc: 1, side: 'R', y: 0, trips: [2.0, 6.9] },
+  { k: 'li', sel: '#con1 .tag', route: 'BR', doc: 3, side: 'R', y: 0, trips: [2.45, 6.5] },
+  { k: 'hoc', sel: '#con2 .tag', route: 'BR', doc: 3, side: 'R', y: 14, trips: [3.5] },
+  { k: 'xw', sel: '#wri1 .tag', route: 'BM', doc: 2, side: 'R', y: 14, trips: [2.55, 5.5] },
+  { k: 'rw', sel: '#wri2 .tag', route: 'BM', doc: 2, side: 'R', y: 0, trips: [3.85, 7.3] },
+  { k: 'yt', sel: '#vid1 .tag', route: 'BL', doc: 0, side: 'L', y: 518, trips: [2.6, 5.9] },
+  { k: 'lv', sel: '#vid2 .tag', route: 'BL', doc: 0, side: 'L', y: 546, trips: [3.8, 7.1] },
+  { k: 'gd', sel: '#stu1 .tag', route: 'L', doc: 3, side: 'L', y: 478, trips: [1.85, 5.6] },
+  { k: 'sl', sel: '#stu3 .tag', route: 'L', doc: 3, side: 'L', y: 534, trips: [2.6, 6.75] },
+  { k: 'cos', sel: '.box2 .tag[data-k="cos"]', route: 'C', doc: 0, side: 'C', y: 0, trips: [0.1, 4.0] },
+];
+const DOCK = 0.45;
+function chaikin(P, n = 3) { for (let k = 0; k < n; k++) { const Q = [P[0]]; for (let i = 0; i < P.length - 1; i++) { const [a, b] = [P[i], P[i + 1]];
+  Q.push([a[0] * 0.75 + b[0] * 0.25, a[1] * 0.75 + b[1] * 0.25], [a[0] * 0.25 + b[0] * 0.75, a[1] * 0.25 + b[1] * 0.75]); } Q.push(P[P.length - 1]); P = Q; } return P; }
+function polyAt(P, cum, f) { const L = cum[cum.length - 1] * f; let i = 1; while (i < cum.length - 1 && cum[i] < L) i++;
+  const u = (L - cum[i - 1]) / Math.max(1e-6, cum[i] - cum[i - 1]); return [P[i - 1][0] + (P[i][0] - P[i - 1][0]) * u, P[i - 1][1] + (P[i][1] - P[i - 1][1]) * u]; }
+function routeFor(b, T, D) {
+  const r = b.route;
+  const way = r === 'TL' ? [[T[0], GT], [XL, GT]] : r === 'BL' ? [[T[0], GB], [XL, GB]] : r === 'L' ? [[XL - 30, T[1]]]
+    : r === 'TM' || r === 'TR' ? [[T[0], GT], [XR, GT]] : r === 'BR' || r === 'BM' ? [[T[0], GB], [XR, GB]] : r === 'R' ? [[XR + 14, T[1]]] : [[T[0] + 50, 606]];
+  const P = chaikin([T, ...way, D]); const cum = [0]; for (let i = 1; i < P.length; i++) cum.push(cum[i - 1] + Math.hypot(P[i][0] - P[i - 1][0], P[i][1] - P[i - 1][1]));
+  return { P, cum, dur: 0.45 + cum[cum.length - 1] / 950 };
+}
+const docChip = (c) => `<svg class="dc" width="15" height="18" viewBox="0 0 15 18"><rect x="0.75" y="0.75" width="13.5" height="16.5" rx="2.5" fill="#FFFFFF" stroke="#0B0B0F" stroke-width="1.5"/><rect x="3" y="4" width="9" height="2.4" rx="1" fill="${c}"/><rect x="3" y="8.5" width="9" height="2" rx="1" fill="#A1A1AA"/><rect x="3" y="12.3" width="6" height="2" rx="1" fill="#A1A1AA"/></svg>`;
+const TRAVEL = 0.7;
+const CODEX = { send: 1.6, back: 3.7, pr: 4.15, move: 4.5, click: 5.0 };
+
+window.addEventListener('load', async () => {
+  await document.fonts.ready;
+  const cards = [
+    { x: TX[0], y: TY, w: TW, h: RH, c: C('ls'), ic: 'radar', title: 'Signals', meta: 'live', rows: R_(['sig1', 'sig2']) },
+    { x: TX[1], y: TY, w: TW, h: RH, c: C('oc'), ic: 'mail', title: 'Accounts and drafts', rows: R_(['acc1']),
+      html: `<div class="mbox" id="mbox" style="--c:${C('oc')}"><div class="mh"><span class="mut">To:</span> Dana Ruiz<span class="mut" style="margin-left:auto">message box</span></div>
+        <div class="mt"><span class="tx"></span><i class="caret"></i></div><div class="mf">${tag('oc')}<span class="st">→</span></div></div>` },
+    { x: TX[2], y: TY, w: TW, h: RH, c: C('sd'), ic: 'flow', title: 'Sequences', meta: 'cap 40/day', rows: R_(['seq1', 'seq2']) },
+    { x: 1032 - 18 - SW, y: MY, w: SW, h: MH, c: C('rm'), ic: 'reply', title: 'Replies and deals', rows: R_(['rep1', 'rep2', 'rep3']) },
+    { x: TX[2], y: BY, w: TW, h: BH, c: C('hoc'), ic: 'idea', title: 'Content plan', meta: 'this week', rows: R_(['con1', 'con2']) },
+    { x: TX[1], y: BY, w: TW, h: BH, c: C('xw'), ic: 'pen', title: 'Writers', meta: 'drafts', rows: R_(['wri1', 'wri2']) },
+    { x: TX[0], y: BY, w: TW, h: BH, c: C('yt'), ic: 'play', title: 'Video', meta: 'YouTube', rows: R_(['vid1', 'vid2']) },
+    { x: 18, y: MY, w: SW, h: MH, c: C('gd'), ic: 'studio', title: 'Studio', meta: 'renders', rows: R_(['stu1', 'stu2', 'stu3']) },
+  ];
+  const DOCS = ['Product Information', 'Ideal Customer', 'Competitor Analysis', 'Tone of Voice'];
+  const docs = DOCS.map((t, i) => `<div class="doc" id="doc${i}" style="left:494px;top:${408 + i * 50}px;width:208px"><span class="fi"></span>${t}</div><span class="bd" id="bd${i}" style="left:${494 + 208 - 22}px;top:${408 + i * 50 - 10}px">+1</span>`);
+  const core = `<div class="core" style="left:${CX}px;top:${MY}px;width:${CW}px;height:${MH}px">
+      <div class="hd"><span style="width:12px;height:12px;border-radius:50%;background:linear-gradient(90deg,${BRAND});display:block"></span>Company Context</div></div>
+    <div id="brain" style="position:absolute;left:326px;top:446px">${brain(164, 130, 3, [])}</div>
+    ${docs.join('')}
+    <div class="box2" style="left:332px;top:622px;width:180px;height:82px">
+      <div class="t" id="cdx">${ico('play', '#D4D4D8')}<span class="tx"></span></div>
+      <div style="margin-top:8px">${tag('cos')}</div></div>
+    <div class="box2" style="left:522px;top:622px;width:180px;height:82px">
+      <div class="t">Your yes<span class="btn" id="prc" style="margin-left:auto;padding:1px 8px">PR #42</span></div>
+      <div style="margin-top:8px;display:flex;align-items:center;gap:6px"><span class="btn" id="apv" style="padding:1px 10px">Approve</span>${tag('luis', 'Luis')}</div></div>`;
+  $('#scene').insertAdjacentHTML('beforeend', toolbar('Company brain'));
+  const W = [...WIRES, ...FLOWS.map((f) => ({ ...f, kind: 'flow' }))];
+  $('#scene').insertAdjacentHTML('beforeend', cards.map(cardA).join('') + core + wires(W));
+  // pulses layer (on top of wires only; wires never touch text, so pulses never cross text)
+  const wp = $$('svg.wires path').filter((p) => !p.getAttribute('d').startsWith('M0,'));
+  const pl = $('svg.wires');
+  pl.insertAdjacentHTML('beforeend', W.map((w, i) => (w.fire || []).map((_, j) => `<circle class="pz" data-w="${i}" data-j="${j}" r="6" fill="${w.c}" stroke="#0A0A0D" stroke-width="2" opacity="0"/>`).join('')).join(''));
+  // brain nodes + their positions (brain-local), entry side per wire (brain-local coords of where the wire meets the core)
+  const nodes = $$('#brain circle'); const base = nodes.map((n) => [n.getAttribute('fill'), +n.getAttribute('r')]);
+  const nxy = nodes.map((n) => [+n.getAttribute('cx'), +n.getAttribute('cy')]);
+  const entry = WIRES.map((w) => { const e = w.pts[w.pts.length - 1]; return [e[0] - 326, e[1] - 446]; });
+  const near = entry.map((e) => nxy.map((p, i) => [Math.hypot(p[0] - e[0], p[1] - e[1]), i]).sort((a, b) => a[0] - b[0]).slice(0, 7).map((x) => x[1]));
+
+
+  // ---- floating bots layer ----
+  const sc0 = $('#scene').getBoundingClientRect();
+  $('#scene').insertAdjacentHTML('beforeend', `<div id="bots" style="position:absolute;left:0;top:0;width:0;height:0">${BOTS.map((b, i) =>
+    `<div class="fb" id="fb${i}">${arrowSvg(C(b.k))}<svg class="hd2" width="22" height="20" data-head="${b.k}"></svg><span class="pw"><span class="pill" style="background:${C(b.k)};color:${SEATS[b.k][2]}">${SEATS[b.k][0]}</span></span>${docChip(C(b.k))}</div>`).join('')}</div>`);
+  const tip = (el) => { const r = el.querySelector('.ar').getBoundingClientRect(); return [r.left - sc0.left + 2, r.top - sc0.top + 1.5]; };
+  BOTS.forEach((b, i) => {
+    b.home = $(b.sel); b.home.style.visibility = 'hidden'; b.el = $('#fb' + i);
+    b.pwW = b.el.querySelector('.pill').getBoundingClientRect().width;
+    window.__seek(0.01); // rest pose
+    const ft = tip(b.el), fr = b.el.getBoundingClientRect(); b.off = [ft[0] - (fr.left - sc0.left), ft[1] - (fr.top - sc0.top)];
+    const T = tip(b.home);
+    const D = b.side === 'R' ? [706, 408 + b.doc * 50 + 6 + b.y] : b.side === 'L' ? [XL, b.y] : [430, 592];
+    b.path = routeFor(b, T, D); b.T = T; b.D = D;
+    const R = S.rng(31 + i), bx = 326 + 20 + R() * 120, by = 446 + 20 + R() * 90; // where in the brain this bot's context lands
+    b.near = nxy.map((p, j) => [Math.hypot(p[0] + 326 - bx, p[1] + 446 - by), j]).sort((x, y) => x[0] - y[0]).slice(0, 8).map((x) => x[1]);
+  });
+  // static measurements for the typing cursors
+  const rowEls = Object.fromEntries(Object.keys(ROWS).map((id) => [id, document.getElementById(id)]));
+
+  function typeInto(el, full, at, d, t) {
+    const n = Math.round(clamp((t - at) / d) * full.length);
+    el.textContent = t < at ? '' : full.slice(0, n);
+    return { typing: t >= at && t < at + d + 0.15, done: t >= at + d };
+  }
+  // place a tag so its arrow tip sits under the caret (x only), clamped inside its line
+  function follow(tagEl, caretEl, line, typing, t, ph) {
+    const lr = line.getBoundingClientRect(), tr = tagEl.getBoundingClientRect(), cur = new DOMMatrix(getComputedStyle(tagEl).transform).m41;
+    const restX = tr.left - cur; let dx = 0;
+    const st = line.querySelector('.st'), lim = (st ? st.getBoundingClientRect().left - 8 : lr.right - 2) - tr.width - restX;
+    if (typing && caretEl) { const cx = caretEl.getBoundingClientRect().left; dx = clamp(cx - restX - 2, 0, Math.max(0, lim)); }
+    const bob = typing ? 0 : 1.5 * Math.sin((t / 4 + ph) * S.TAU);
+    return [dx, bob];
+  }
+  let prevDx = {};
+  S.scenes.push((t) => {
+    // toolbar heads + tag heads (blink)
+    $('#scene .heads').innerHTML = ORDER.map((k, i) => headT(13 + i * 25, 17, C(k), t, i * 0.06, 0.78)).join('');
+    $$('svg[data-head]').forEach((s, i) => (s.innerHTML = headT(11, 10, C(s.dataset.head), t, i * 0.11, 0.78)));
+    // rows
+    Object.values(ROWS).forEach((r, ri) => {
+      const el = rowEls[r.id], tagEl = el.querySelector('.tag'); let active = false, caret = null;
+      if (r.ty != null) {
+        const tx = el.querySelector('.tx'), cr = el.querySelector('.cr');
+        const st = typeInto(tx, r.ty, r.at, r.d, t); active = st.typing;
+        cr.style.opacity = st.typing ? (frac(t * 2) < 0.6 ? 1 : 0) : 0; caret = cr;
+        tx.style.opacity = out(t).toFixed(3);
+      }
+      (r.chips || []).forEach(([, at], i) => { const ch = el.querySelector(`.chip[data-i="${i}"]`), v = on(t, at, 0.2);
+        ch.style.opacity = (0.28 + 0.72 * v).toFixed(3); ch.classList.toggle('on', v > 0.5); if (t > at - 0.5 && t < at + 0.35) active = true; });
+      const s = el.querySelector('.st'); if (s && r.sAt != null) s.style.opacity = on(t, r.sAt).toFixed(3);
+      el.style.outlineColor = active ? C(r.k) : 'transparent';
+      const [dx, bob] = follow(tagEl, caret, el.querySelector('.l2'), active && r.ty != null, t, ri * 0.13);
+      const press = r.clickAt != null && wrap(t, r.clickAt) < 0.22 ? 0.82 : 1;
+      tagEl.style.transform = `translate(${dx.toFixed(1)}px, ${bob.toFixed(2)}px)`;
+      tagEl.querySelector('.ar').style.transform = `scale(${press})`;
+      tagEl.querySelector('.pill').style.filter = press < 1 ? 'brightness(1.25)' : 'none';
+    });
+    // message box (Outbound Copywriter types; "next →" when done)
+    const mb = $('#mbox'), mtx = mb.querySelector('.tx'), mc = mb.querySelector('.caret'), ms = typeInto(mtx, MSG.text, MSG.at, MSG.d, t);
+    mtx.style.opacity = out(t).toFixed(3); mc.style.opacity = t < MSG.at + MSG.d + 0.6 && t > MSG.at - 0.6 ? (frac(t * 2) < 0.6 ? 1 : 0) : 0;
+    mb.querySelector('.st').style.opacity = on(t, MSG.at + MSG.d + 0.1).toFixed(3);
+    const mtag = mb.querySelector('.tag'); const [mdx, mbob] = follow(mtag, ms.typing ? mc : null, mb.querySelector('.mf'), ms.typing, t, 0.4);
+    mtag.style.transform = `translate(${mdx.toFixed(1)}px, ${mbob.toFixed(2)}px)`;
+    mb.style.borderStyle = ms.typing ? 'dashed' : 'solid';
+    // Chief of Staff: packet to Codex, PR comes back
+    const cdx = $('#cdx .tx');
+    if (t < CODEX.back) typeInto(cdx, 'Packet to Codex', CODEX.send - 0.9, 0.8, t); else cdx.textContent = '✓ PR #42 back';
+    cdx.style.opacity = out(t).toFixed(3);
+    const ctag = $('.box2 .tag[data-k="cos"]'); ctag.querySelector('.ar').style.transform = `scale(${wrap(t, CODEX.send) < 0.22 || wrap(t, CODEX.back) < 0.22 ? 0.82 : 1})`;
+    ctag.style.transform = `translateY(${(1.5 * Math.sin((t / 4 + 0.7) * S.TAU)).toFixed(2)}px)`;
+    // yes gate: PR chip arrives, Luis moves onto Approve and clicks
+    $('#prc').style.opacity = (0.25 + 0.75 * on(t, CODEX.pr)).toFixed(3);
+    const lt = $('.tag[data-k="luis"]'), mv = on(t, CODEX.move, 0.4) * (1 - on(t, CODEX.click + 0.6, 0.4));
+    const lpress = wrap(t, CODEX.click) < 0.25 ? 0.8 : 1;
+    lt.style.transform = `translate(${(-12 * mv).toFixed(1)}px, ${(mv ? -2 * mv : 1.5 * Math.sin((t / 4) * S.TAU)).toFixed(2)}px)`;
+    lt.querySelector('.ar').style.transform = `scale(${lpress})`;
+    const apv = $('#apv'), ok = on(t, CODEX.click, 0.15);
+    apv.textContent = ok > 0.5 ? '✓ Yes' : 'Approve';
+    apv.style.background = ok > 0.5 ? 'linear-gradient(90deg,#12B2F8,#4E63F9)' : '#FFFFFF'; apv.style.color = ok > 0.5 ? '#FFFFFF' : '#0B0B0F';
+    // pulses along wires + arrivals
+    const heat = nodes.map(() => null), badge = [0, 0, 0, 0], bcol = ['', '', '', ''];
+    $$('circle.pz').forEach((c) => {
+      const wi = +c.dataset.w, w = W[wi], at = w.fire[+c.dataset.j], u = wrap(t, at) / TRAVEL, p = wp[wi];
+      if (u < 1) { const pt = p.getPointAtLength(p.getTotalLength() * ease(u)); c.setAttribute('cx', pt.x.toFixed(1)); c.setAttribute('cy', pt.y.toFixed(1));
+        c.setAttribute('opacity', Math.min(1, u * 6, (1 - u) * 6).toFixed(2)); } else c.setAttribute('opacity', 0);
+      if (wi < WIRES.length) { const since = wrap(t, at + TRAVEL), g = since < 1.4 ? 1 - since / 1.4 : 0;
+        if (g > 0) { near[wi].forEach((ni) => { if (!heat[ni] || heat[ni][1] < g) heat[ni] = [w.c, g]; }); if (g > badge[w.doc]) { badge[w.doc] = g; bcol[w.doc] = w.c; } } }
+    });
+
+    // floating bots
+    BOTS.forEach((b) => {
+      const { dur } = b.path; let state = 'home', u = 0, ts = 0;
+      for (const d of b.trips) { const s2 = wrap(t, d);
+        if (s2 < dur) { state = 'out'; u = s2 / dur; ts = s2; } else if (s2 < dur + DOCK) { state = 'dock'; ts = s2 - dur; } else if (s2 < 2 * dur + DOCK) { state = 'back'; u = (s2 - dur - DOCK) / dur; ts = s2 - dur - DOCK; }
+        const since = s2 - dur; if (since >= 0 && since < 1.4) { const g = 1 - since / 1.4; b.near.forEach((ni) => { if (!heat[ni] || heat[ni][1] < g) heat[ni] = [C(b.k), g]; }); if (g > badge[b.doc]) { badge[b.doc] = g; bcol[b.doc] = C(b.k); } } }
+      const home = tip(b.home); let p;
+      const sm = (x) => x * x * (3 - 2 * x);
+      if (state === 'home') p = home;
+      else if (state === 'dock') p = [b.D[0] + 2 * Math.sin(ts * 14), b.D[1]];
+      else { const f = state === 'out' ? sm(u) : 1 - sm(u); const q = polyAt(b.path.P, b.path.cum, f); const w = state === 'out' ? 1 - Math.min(1, u * 4) : 1 - Math.min(1, (1 - u) * 4);
+        p = [q[0] + (home[0] - b.T[0]) * w, q[1] + (home[1] - b.T[1]) * w]; }
+      const away = state === 'home' ? 0 : state === 'out' ? Math.min(1, u * 5) : state === 'dock' ? 1 : Math.min(1, (1 - u) * 5);
+      b.el.style.transform = `translate(${(p[0] - b.off[0]).toFixed(1)}px, ${(p[1] - b.off[1]).toFixed(1)}px)`;
+      b.el.querySelector('.pw').style.maxWidth = (b.pwW * (1 - away)).toFixed(1) + 'px';
+      b.el.querySelector('.pw').style.opacity = (1 - away).toFixed(3);
+      const carry = state === 'out' ? Math.min(1, u * 5) : state === 'dock' ? 1 - ease(clamp((ts - 0.15) / 0.3)) : 0;
+      const dc = b.el.querySelector('.dc'); dc.style.opacity = carry.toFixed(3); dc.style.width = (15 * Math.min(1, carry * 3)).toFixed(1) + 'px';
+      b.el.querySelector('.ar').style.transform = state === 'dock' && ts > 0.12 && ts < 0.3 ? 'scale(0.82)' : b.home.querySelector('.ar').style.transform;
+      b.el.classList.toggle('moving', state !== 'home');
+    });
+    nodes.forEach((n, i) => { const h = heat[i]; n.setAttribute('fill', h ? h[0] : base[i][0]); n.setAttribute('r', (base[i][1] + (h ? 2.6 * h[1] : 0)).toFixed(2)); });
+    DOCS.forEach((_, i) => { const d = $('#doc' + i), b = $('#bd' + i), g = badge[i];
+      b.style.opacity = g.toFixed(3); b.style.background = bcol[i] || '#fff'; d.style.borderColor = g > 0.05 ? bcol[i] : '#2A2A33'; });
+  });
+  window.__seek(0);
+  // tag-over-text check across the loop (used by check-anim.mjs)
+  window.__tagCheck = () => {
+    const txt = []; const tw = document.createTreeWalker($('#scene'), NodeFilter.SHOW_TEXT); let n;
+    while ((n = tw.nextNode())) { if (!n.textContent.trim() || n.parentElement.closest('.tag')) continue; const rg = document.createRange(); rg.selectNodeContents(n);
+      if (n.parentElement.closest('#bots') || getComputedStyle(n.parentElement).visibility === 'hidden') continue;
+      for (const r of rg.getClientRects()) if (r.width > 1) txt.push([r, n.textContent.trim().slice(0, 18)]); }
+    const bad = [];
+    $$('.tag').filter((g) => g.style.visibility !== 'hidden').forEach((g) => [...g.children].forEach((c) => { const q = c.getBoundingClientRect();
+      txt.forEach(([r, s]) => { if (q.left < r.right - 1 && r.left < q.right - 1 && q.top < r.bottom - 1 && r.top < q.bottom - 1) bad.push(`${g.dataset.k} over "${s}"`); }); }));
+    $$('.card, .box2, .mbox, .r').forEach((b) => { const br = b.getBoundingClientRect(); $$('.tag').forEach((g) => { if (!b.contains(g)) return; const q = g.getBoundingClientRect(); if (q.right > br.right + 0.5) bad.push(`${g.dataset.k} sticks out of ${b.className}`); }); });
+    // floating bots: home ones must not cover text; moving ones are counted (brief overlaps are allowed, long ones are not)
+    const moving = [];
+    BOTS.forEach((b) => { const q = b.el.getBoundingClientRect(); const hit = txt.filter(([r]) => q.left < r.right - 1 && r.left < q.right - 1 && q.top < r.bottom - 1 && r.top < q.bottom - 1).map(([, s]) => s);
+      if (hit.length) (b.el.classList.contains('moving') ? moving : bad).push(`${b.k} over "${hit[0]}"`); });
+    window.__moving = moving;
+    return [...new Set(bad)];
+  };
+  window.__report = selfCheck(W); window.__ready = true;
+});

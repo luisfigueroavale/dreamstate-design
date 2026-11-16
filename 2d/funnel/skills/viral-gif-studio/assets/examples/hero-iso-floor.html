@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post 1 v2: GTM team in a repo</title>
+<!-- Hero: isometric floor with 16 bots. Seven lane bots send work packets to one pedestal (you).
+     Every 2s you approve one item and it goes out to a channel. Bottom: playbook, terminal, approval queue. -->
+<link rel="stylesheet" href="../template/base.css">
+<style>
+  .co { position: absolute; width: 246px; display: flex; gap: 10px; align-items: flex-start; }
+  .co.r { flex-direction: row-reverse; text-align: right; }
+  .co b { display: block; font-size: 19px; font-weight: 750; line-height: 1.15; }
+  .co span { display: block; font-size: 15px; color: #6B7A9E; margin-top: 3px; line-height: 1.25; }
+  .co .num { background: #DCE6FA; color: #1450D9; }
+  .co.on .num { background: #1450D9; color: #fff; box-shadow: 0 0 0 6px rgba(20,80,217,.15); }
+  .chan { position: absolute; top: 306px; left: 0; right: 0; display: flex; justify-content: center; gap: 12px; }
+  .chan div { display: flex; align-items: center; gap: 8px; font-size: 16px; font-weight: 650; background: #fff; border: 1px solid #DCE5F7; border-radius: 999px; padding: 6px 14px 6px 8px; color: #4B5B80; }
+  .chan i { width: 22px; height: 22px; border-radius: 6px; display: grid; place-items: center; color: #fff; font: 800 12px Inter, system-ui; font-style: normal; }
+  .chan div.hit { border-color: #22C55E; color: #15803D; box-shadow: 0 0 0 5px rgba(34,197,94,.14); }
+  .spec { position: absolute; top: 718px; left: 0; right: 0; text-align: center; }
+  .spec span { font-size: 16px; font-weight: 600; color: #4B5B80; background: #fff; border: 1px dashed #B9C8EA; border-radius: 999px; padding: 6px 14px; }
+  .play { left: 40px; right: 40px; top: 768px; height: 92px; display: flex; align-items: center; padding: 0 22px; gap: 10px; }
+  .play h4 { width: 120px; flex: none; }
+  .st { flex: 1; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 650; position: relative; }
+  .st small { display: block; font-size: 14px; font-weight: 500; color: #6B7A9E; }
+  .st .num { background: #DCE6FA; color: #1450D9; }
+  .st.on .num { background: #1450D9; color: #fff; }
+  .prog { position: absolute; left: 182px; right: 22px; bottom: 12px; height: 4px; border-radius: 4px; background: #E6EDFB; overflow: hidden; }
+  .prog i { display: block; height: 100%; background: linear-gradient(90deg, #4A86F7, #1450D9); }
+  #term { left: 40px; top: 880px; width: 492px; height: 310px; border-radius: 22px; overflow: hidden; }
+  #appr { left: 548px; top: 880px; width: 492px; height: 310px; padding: 20px 22px; }
+  #appr .rule { font-size: 23px; font-weight: 800; line-height: 1.2; margin: 8px 0 14px; letter-spacing: -.01em; }
+  #appr .rule em { font-style: normal; color: #1450D9; }
+  .q { display: flex; align-items: center; gap: 12px; height: 50px; border-radius: 12px; padding: 0 10px 0 12px; margin-bottom: 8px; background: #F5F8FE; border: 1px solid #E3EAF8; }
+  .q .ic { width: 28px; height: 28px; border-radius: 8px; display: grid; place-items: center; color: #fff; font: 800 13px Inter, system-ui; }
+  .q .tx { font-size: 17px; font-weight: 650; } .q .tx small { color: #6B7A9E; font-weight: 500; margin-left: 6px; }
+  .q .btn { margin-left: auto; font-size: 15px; font-weight: 700; padding: 7px 14px; border-radius: 9px; background: #1450D9; color: #fff; }
+  .q.ok { background: #ECFDF3; border-color: #BBF7D0; }
+  .q.ok .btn { background: #22C55E; }
+  #cur { position: absolute; width: 26px; height: 30px; }
+</style>
+</head>
+<body>
+  <div class="top"><div class="mark"></div><div class="word">Dreamstate</div><div class="pill">Open source · Free</div></div>
+  <h1>Half a GTM team,<br><em>in one GitHub repo</em></h1>
+  <p class="sub"><b>16 bots</b> · <b>7 lanes</b> · <b>1 approver</b>: you</p>
+
+  <div class="chan" id="chan">
+    <div><i style="background:#EA4335">@</i>Email</div>
+    <div><i style="background:#0A66C2">in</i>LinkedIn</div>
+    <div><i style="background:#111">X</i>X</div>
+    <div><i style="background:#FF0000">▶</i>YouTube</div>
+  </div>
+
+  <svg class="layer" id="hero"></svg>
+
+  <div id="cos"></div>
+  <div class="spec"><span>+ 9 specialist bots on call</span></div>
+
+  <div class="card play" id="play">
+    <h4>Playbook</h4>
+    <div class="st"><span class="num">1</span><div>Clone the repo<small>free, 2 minutes</small></div></div>
+    <div class="st"><span class="num">2</span><div>Paste the setup prompt<small>into Claude Code</small></div></div>
+    <div class="st"><span class="num">3</span><div>Run your week<small>bots fill their lanes</small></div></div>
+    <div class="st"><span class="num">4</span><div>Say yes<small>item by item</small></div></div>
+    <div class="prog"><i id="progbar"></i></div>
+  </div>
+
+  <div class="card term" id="term">
+    <div class="bar"><i></i><i></i><i></i>&nbsp; ~/gtm-team<span>Claude Code</span></div>
+    <pre id="tout"></pre>
+  </div>
+
+  <div class="card" id="appr">
+    <h4>The one rule</h4>
+    <div class="rule">Nothing sends, posts or spends <em>until you say yes.</em></div>
+    <div class="q"><span class="ic" style="background:#EA4335">@</span><span class="tx">First-touch email<small>40 leads</small></span><span class="btn">Approve</span></div>
+    <div class="q"><span class="ic" style="background:#0A66C2">in</span><span class="tx">Comments<small>3 posts</small></span><span class="btn">Approve</span></div>
+    <div class="q"><span class="ic" style="background:#4A86F7">↩</span><span class="tx">Reply draft<small>1 live thread</small></span><span class="btn">Approve</span></div>
+  </div>
+  <svg id="cur" viewBox="0 0 26 30"><path d="M3 2 L3 24 L9 18 L13 28 L17 26 L13 16 L21 16 Z" fill="#0B1B45" stroke="#fff" stroke-width="2" stroke-linejoin="round"/></svg>
+
+  <div class="foot">
+    <div class="brand"><div class="mark"></div>Dreamstate <span class="url">trydreamstate.com</span></div>
+    <div class="cta"><span class="ring" id="ring"></span>Comment <kbd>TEAM</kbd> for the repo + setup prompt</div>
+  </div>
+
+<script src="../template/scene.js"></script>
+<script>
+const { L, TAU, clamp, ease, frac, lerp } = S;
+const K = 58, I = S.iso(540, 392, K), P = I.P;
+const LANES = [
+  { n: 1, name: 'Lead Sourcer', job: 'Builds and scores the list', c: [0.5, 1.5], side: 'l', y: 352 },
+  { n: 2, name: 'Outbound Copywriter', job: 'First email + LinkedIn note', c: [0.5, 2.5], side: 'l', y: 446 },
+  { n: 3, name: 'Sequences & Deliverability', job: 'Loads it, watches inbox health', c: [0.5, 3.5], side: 'l', y: 540 },
+  { n: 4, name: 'Social Engagement', job: 'Drafts comments on the right posts', c: [0.5, 4.5], side: 'l', y: 634 },
+  { n: 5, name: 'Reply Manager', job: 'Drafts replies in live threads', c: [2.5, 0.5], side: 'r', y: 400 },
+  { n: 6, name: 'Head of Content', job: 'Plans the week for LinkedIn, X, YouTube', c: [3.5, 0.5], side: 'r', y: 506 },
+  { n: 7, name: 'Chief of Staff', job: 'Hands file work to Claude Code', c: [4.5, 0.5], side: 'r', y: 612 },
+];
+const SPECS = [[1.5, 0.5], [3.5, 1.5], [4.5, 1.5], [4.5, 2.5], [1.5, 3.5], [3.5, 3.5], [2.5, 4.5], [4.5, 4.5], [3.5, 4.5]];
+const HUB = [2.5, 2.5];
+
+// Callouts (static DOM).
+const cos = document.getElementById('cos');
+LANES.forEach((l) => {
+  const d = document.createElement('div');
+  d.className = 'co' + (l.side === 'r' ? ' r' : '');
+  d.style.top = l.y + 'px';
+  d.style[l.side === 'l' ? 'left' : 'right'] = '30px';
+  d.innerHTML = `<span class="num">${l.n}</span><div><b>${l.name}</b><span>${l.job}</span></div>`;
+  cos.appendChild(d); l.el = d;
+});
+
+const DESK = ['#FFFFFF', '#D3DEF5', '#BCCCEE'];
+const PLAT = ['#FBFCFF', '#DCE5F7', '#C6D4F0'];
+function bot(x, y, lane, t, ph) {
+  const [hx, hy0] = P(x, y, 0.3);
+  const hy = hy0 - 20 + Math.sin(TAU * (t / L * 2 + ph)) * 2.5;
+  const blink = frac(t / 4 + ph) > 0.96 ? 1 : 0;
+  const body = lane ? '#1450D9' : '#B4C5EA', face = lane ? '#0B2A7A' : '#8EA3D3';
+  const led = lane ? (frac(t / 2 + ph) < 0.5 ? '#7CF0A8' : '#9CC2FF') : '#DCE6FA';
+  return I.box(x, y, 0.3, 0.3, 0, 0.3, DESK) +
+    `<line x1="${hx}" y1="${hy - 13}" x2="${hx}" y2="${hy - 21}" stroke="${body}" stroke-width="2"/>` +
+    `<circle cx="${hx}" cy="${hy - 23}" r="3.5" fill="${led}"/>` +
+    `<rect x="${hx - 17}" y="${hy - 13}" width="34" height="26" rx="9" fill="${body}"/>` +
+    `<rect x="${hx - 12}" y="${hy - 8}" width="24" height="14" rx="5" fill="${face}"/>` +
+    (blink ? `<rect x="${hx - 8}" y="${hy - 2}" width="5" height="1.5" fill="#fff"/><rect x="${hx + 3}" y="${hy - 2}" width="5" height="1.5" fill="#fff"/>`
+           : `<circle cx="${hx - 5}" cy="${hy - 1}" r="2.6" fill="#fff"/><circle cx="${hx + 5}" cy="${hy - 1}" r="2.6" fill="#fff"/>`);
+}
+
+const PERIOD = 4, TRAVEL = 1.7;
+const chanEls = [...document.querySelectorAll('#chan div')];
+S.scenes.push((t) => {
+  let s = '<defs><filter id="gl" x="-1" y="-1" width="3" height="3"><feGaussianBlur stdDeviation="3"/></filter></defs>';
+  // Shadow + platform slab and tiles.
+  const [, fy] = P(5, 5, -0.35);
+  s += `<ellipse cx="540" cy="${fy + 18}" rx="300" ry="26" fill="rgba(11,27,69,.10)"/>`;
+  s += I.box(2.5, 2.5, 2.5, 2.5, -0.35, 0.35, PLAT);
+  for (let i = 1; i < 5; i++) {
+    s += `<line x1="${P(i, 0)[0]}" y1="${P(i, 0)[1]}" x2="${P(i, 5)[0]}" y2="${P(i, 5)[1]}" stroke="#E4EBF8" stroke-width="1.5"/>`;
+    s += `<line x1="${P(0, i)[0]}" y1="${P(0, i)[1]}" x2="${P(5, i)[0]}" y2="${P(5, i)[1]}" stroke="#E4EBF8" stroke-width="1.5"/>`;
+  }
+  // Tracks from each lane to the hub.
+  LANES.forEach((l) => {
+    const a = P(...l.c, 0.01), b = P(...HUB, 0.01);
+    s += `<line x1="${a[0]}" y1="${a[1]}" x2="${b[0]}" y2="${b[1]}" stroke="#9CC2FF" stroke-width="2.5" stroke-dasharray="5 7" stroke-dashoffset="${-t * 24}"/>`;
+  });
+  // Pulse rings on the floor under the hub.
+  for (let k = 0; k < 2; k++) {
+    const f = frac(t / 2 + k / 2);
+    const [hx, hy] = P(...HUB, 0);
+    s += `<ellipse cx="${hx}" cy="${hy}" rx="${30 + f * 120}" ry="${(30 + f * 120) * 0.5}" fill="none" stroke="#4A86F7" stroke-width="2" opacity="${(1 - f) * 0.5}"/>`;
+  }
+  // Packets on the floor, under the desks.
+  LANES.forEach((l, i) => {
+    const ph = frac((t + i * PERIOD / 7) / PERIOD) * PERIOD;
+    l.on = ph < 0.6;
+    if (ph > TRAVEL) return;
+    const f = ease(ph / TRAVEL);
+    const [px, py] = P(lerp(l.c[0], HUB[0], f), lerp(l.c[1], HUB[1], f), 0.18);
+    s += `<circle cx="${px}" cy="${py}" r="9" fill="#4A86F7" filter="url(#gl)" opacity=".8"/><rect x="${px - 6}" y="${py - 6}" width="12" height="12" rx="3" transform="rotate(45 ${px} ${py})" fill="#1450D9" stroke="#fff" stroke-width="1.5"/>`;
+  });
+  // Objects back to front.
+  const objs = [];
+  LANES.forEach((l, i) => objs.push({ d: l.c[0] + l.c[1], h: bot(l.c[0], l.c[1], true, t, i * 0.13) }));
+  SPECS.forEach((c, i) => objs.push({ d: c[0] + c[1], h: bot(c[0], c[1], false, t, 0.5 + i * 0.11) }));
+  const ap = frac(t / 2);
+  const press = ap < 0.15 ? 0.06 : 0;
+  let hub = I.box(...HUB, 0.42, 0.42, 0, 0.62, ['#5B92F8', '#1450D9', '#0B3BA8']);
+  const [bx, by] = P(...HUB, 0.62 - press);
+  hub += `<ellipse cx="${bx}" cy="${by}" rx="26" ry="13" fill="#15803D"/><ellipse cx="${bx}" cy="${by - 5}" rx="26" ry="13" fill="${ap < 0.4 ? '#4ADE80' : '#22C55E'}"/>`;
+  hub += `<text x="${bx}" y="${by - 1}" text-anchor="middle" font-size="12" font-weight="800" fill="#fff" font-family="Inter,system-ui">YES</text>`;
+  objs.push({ d: 5, h: hub });
+  objs.sort((a, b) => a.d - b.d).forEach((o) => (s += o.h));
+  s += `<rect x="${bx - 44}" y="${by - 64}" width="88" height="30" rx="15" fill="#fff" stroke="#1450D9" stroke-width="2"/>` +
+       `<text x="${bx}" y="${by - 44}" text-anchor="middle" font-size="15" font-weight="800" fill="#1450D9" font-family="Inter,system-ui">YOU</text>`;
+  // Approval beam to a channel every 2s.
+  const ci = Math.floor(t / 2) % 4;
+  const r = chanEls[ci].getBoundingClientRect();
+  const tx = r.left + r.width / 2, ty = r.bottom;
+  if (ap > 0.08 && ap < 0.75) {
+    const bf = ease(clamp((ap - 0.08) / 0.3));
+    const sx = bx, sy = by - 66;
+    const qx = (sx + tx) / 2, qy = ty + 30;
+    const ex = (1 - bf) * (1 - bf) * sx + 2 * (1 - bf) * bf * qx + bf * bf * tx;
+    const ey = (1 - bf) * (1 - bf) * sy + 2 * (1 - bf) * bf * qy + bf * bf * ty;
+    s += `<path d="M${sx},${sy} Q${qx},${qy} ${tx},${ty}" fill="none" stroke="#22C55E" stroke-width="3" stroke-dasharray="${bf * 400} 999" opacity="${1 - clamp((ap - 0.5) / 0.25)}"/>`;
+    s += `<circle cx="${ex}" cy="${ey}" r="6" fill="#22C55E"/><circle cx="${ex}" cy="${ey}" r="13" fill="#22C55E" opacity=".25"/>`;
+  }
+  chanEls.forEach((el, k) => el.classList.toggle('hit', k === ci && ap > 0.3 && ap < 0.95));
+  // Leader lines from callouts to bots.
+  LANES.forEach((l) => {
+    const [hx, hy0] = P(...l.c, 0.3);
+    const hy = hy0 - 20;
+    const cr = l.el.getBoundingClientRect();
+    const ax = l.side === 'l' ? cr.right + 6 : cr.left - 6, ay = cr.top + 14;
+    const ex = hx + (l.side === 'l' ? -20 : 20);
+    s += `<path d="M${ax},${ay} L${ex},${hy}" stroke="${l.on ? '#1450D9' : '#B9C8EA'}" stroke-width="1.8" fill="none"/>`;
+    s += `<circle cx="${ex}" cy="${hy}" r="${l.on ? 5 : 3.5}" fill="${l.on ? '#1450D9' : '#B9C8EA'}"/>`;
+    l.el.classList.toggle('on', l.on);
+  });
+  // Floating sparks.
+  const rnd = S.rng(7);
+  for (let k = 0; k < 26; k++) {
+    const x0 = 300 + rnd() * 480, y0 = 380 + rnd() * 300, sp = 1 + Math.floor(rnd() * 2), o = rnd(), rr = 1.5 + rnd() * 1.5;
+    const f = frac(t / L * sp + o);
+    s += `<circle cx="${x0 + Math.sin(TAU * (f + o)) * 8}" cy="${y0 - f * 60}" r="${rr}" fill="#4A86F7" opacity="${Math.sin(Math.PI * f) * 0.55}"/>`;
+  }
+  document.getElementById('hero').innerHTML = s;
+
+  // Playbook progress.
+  const pf = frac(t / L);
+  document.getElementById('progbar').style.width = (pf * 100).toFixed(1) + '%';
+  document.querySelectorAll('.st').forEach((el, k) => el.classList.toggle('on', pf >= k / 4));
+
+  // Terminal.
+  const T = S.typed([
+    { text: '$ git clone dreamstate/gtm-team', at: 0.1, speed: 45 },
+    { text: '$ claude "run my outbound week"', at: 1.0, speed: 45 },
+    { text: '✓ lead-sourcer      list scored', at: 2.0, speed: 90 },
+    { text: '✓ copywriter        drafts ready', at: 2.6, speed: 90 },
+    { text: '✓ deliverability    inboxes checked', at: 3.2, speed: 90 },
+    { text: '✓ reply-manager     threads drafted', at: 3.8, speed: 90 },
+    { text: '● 16 bots loaded', at: 4.6, speed: 60 },
+    { text: '⏸ waiting on your yes', at: 5.3, speed: 50 },
+  ], t);
+  const out = T.lines.map((ln) => {
+    let h = ln.replace(/&/g, '&amp;');
+    if (h.startsWith('✓')) h = `<span class="ok">✓</span><span class="dim">${h.slice(1).replace(/(\s{2,}.*)$/, '</span><span class="acc">$1')}</span>`;
+    else if (h.startsWith('⏸')) h = `<span class="wait">${h}</span>`;
+    else if (h.startsWith('●')) h = `<span class="acc">${h}</span>`;
+    else if (h.startsWith('$')) h = `<span class="dim">$</span>${h.slice(1)}`;
+    return h;
+  });
+  document.getElementById('tout').innerHTML = out.join('\n') + (frac(t * 2) < 0.5 ? '<span class="cursor"></span>' : '');
+  document.getElementById('tout').style.opacity = T.alpha;
+
+  // Approval queue: cursor clicks each Approve in turn.
+  const qs = [...document.querySelectorAll('.q')];
+  const clicks = [1.6, 3.6, 5.6];
+  const pos = qs.map((q) => { const b = q.querySelector('.btn').getBoundingClientRect(); return [b.left + b.width / 2, b.top + b.height / 2]; });
+  const home = [990, 1172];
+  const path = [home, ...pos, home], times = [0.4, ...clicks, 7.4];
+  let cx = home[0], cy = home[1];
+  for (let k = 0; k < times.length - 1; k++) {
+    if (t >= times[k] && t < times[k + 1]) {
+      const f = ease((t - times[k]) / Math.min(1.0, times[k + 1] - times[k]));
+      cx = lerp(path[k][0], path[k + 1][0], f); cy = lerp(path[k][1], path[k + 1][1], f);
+    }
+  }
+  const cur = document.getElementById('cur');
+  cur.style.left = cx - 3 + 'px'; cur.style.top = cy - 2 + 'px';
+  cur.style.transform = clicks.some((c) => t >= c && t < c + 0.15) ? 'scale(.85)' : 'none';
+  qs.forEach((q, k) => {
+    const done = t >= clicks[k] && t < 7.6;
+    q.classList.toggle('ok', done);
+    q.querySelector('.btn').textContent = done ? 'Approved ✓' : 'Approve';
+  });
+
+  // CTA ring pulse.
+  const rf = frac(t / 2);
+  const ring = document.getElementById('ring');
+  ring.style.transform = `scale(${1 + rf * 0.06}, ${1 + rf * 0.4})`;
+  ring.style.opacity = (1 - rf) * 0.8;
+});
+</script>
+</body>
+</html>

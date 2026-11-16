@@ -1,0 +1,40 @@
+/* Dreamstate HOUSE FRAME for every GIF (set by Luis, Nov 15 2026).
+   1080x1350 (4:5). White page. Logo top, big title with gradient key phrase, gray subtitle,
+   hero in the middle (310 to 1200 px), clean bottom banner: photo + name left, "Comment WORD to get it" right. */
+* { box-sizing: border-box; transition: none !important; animation: none !important; }
+html, body { margin: 0; }
+body { width: 1080px; height: 1350px; position: relative; overflow: hidden; background: #FFFFFF;
+  font-family: Inter, system-ui, sans-serif; color: #0B1B45; }
+.hf-logo { position: absolute; top: 42px; left: 0; right: 0; display: flex; justify-content: center; }
+.hf-logo img { height: 38px; display: block; }
+.hf-title { position: absolute; left: 40px; right: 40px; top: 108px; margin: 0; text-align: center;
+  font-size: 66px; line-height: 1.04; font-weight: 800; letter-spacing: -.035em; color: #0B1B45; }
+.hf-title em { font-style: normal; background: linear-gradient(90deg, #12B2F8, #4E63F9);
+  -webkit-background-clip: text; background-clip: text; color: transparent; }
+.hf-sub { position: absolute; left: 0; right: 0; top: 256px; margin: 0; text-align: center; font-size: 24px; font-weight: 500; color: #6B7591; }
+.hf-foot { position: absolute; left: 0; right: 0; bottom: 0; height: 124px; display: flex; align-items: center;
+  justify-content: space-between; padding: 0 48px; background: #FFFFFF; border-top: 1px solid #E7EBF3; }
+.hf-who { display: flex; align-items: center; gap: 16px; }
+.hf-who img { width: 66px; height: 66px; border-radius: 50%; display: block; }
+.hf-who b { display: block; font-size: 24px; font-weight: 750; letter-spacing: -.01em; }
+.hf-who span { display: block; font-size: 18px; color: #6B7591; margin-top: 2px; }
+.hf-cta { display: flex; align-items: center; gap: 14px; font-size: 30px; font-weight: 800; letter-spacing: -.02em; }
+.hf-key { position: relative; display: inline-block; padding: 3px; border-radius: 16px; }
+.hf-key .rim { position: absolute; inset: 0; border-radius: 16px; }
+.hf-key .glow { position: absolute; inset: -6px; border-radius: 22px; background: rgba(18,178,248,.35); filter: blur(10px); }
+.hf-key kbd { position: relative; display: block; font: 800 28px Inter, system-ui, sans-serif; color: #fff; letter-spacing: .02em;
+  background: linear-gradient(90deg, #12B2F8, #4E63F9); border-radius: 13px; padding: 8px 18px; }
+.hf-cta small { display: block; }
+svg.layer { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; overflow: visible; pointer-events: none; }
+
+/* VARIANT "blue banner" (Luis, Nov 15 2026). Opt in with <div class="hf-foot blue">; the white banner above stays the default.
+   Solid brand-blue banner (#12B2F8 -> #4E63F9). Left: photo (exact colors, white ring) + "Luis Vale" / "Dreamstate" in white.
+   Right: white "Comment [WORD] to get it", WORD in a WHITE pill with BLACK text. */
+.hf-foot.blue { height: 128px; background: linear-gradient(90deg, #12B2F8, #4E63F9); border-top: 0; color: #FFFFFF; }
+.hf-foot.blue .hf-who img { width: 72px; height: 72px; box-shadow: 0 0 0 3px #FFFFFF; }
+.hf-foot.blue .hf-who b { color: #FFFFFF; font-size: 26px; }
+.hf-foot.blue .hf-who span { color: rgba(255,255,255,.92); font-size: 20px; font-weight: 600; }
+.hf-foot.blue .hf-cta { color: #FFFFFF; font-size: 32px; }
+.hf-foot.blue .hf-key .rim { background: rgba(255,255,255,.65); }
+.hf-foot.blue .hf-key .glow { background: rgba(255,255,255,.45); }
+.hf-foot.blue .hf-key kbd { background: #FFFFFF; color: #0B0B0F; font-size: 30px; padding: 8px 20px; }

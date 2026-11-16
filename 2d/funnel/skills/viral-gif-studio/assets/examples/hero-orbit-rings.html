@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post 2 v2: GTM people I learn from</title>
+<!-- Hero: tilted orbit system. Four rings = four categories, avatars orbit our pipeline core.
+     When an avatar swings to the front its name lights up and an idea particle flies into the core.
+     Bottom: playbook, feed filter (recycled vs built), comment box. Tim Scheuer is left out on purpose. -->
+<link rel="stylesheet" href="../template/base.css">
+<style>
+  .grp { position: absolute; width: 250px; }
+  .grp.r { text-align: right; }
+  .grp .hd { display: flex; align-items: center; gap: 10px; font-size: 19px; font-weight: 800; margin-bottom: 8px; }
+  .grp.r .hd { flex-direction: row-reverse; }
+  .grp .hd small { font-size: 13px; font-weight: 600; color: #6B7A9E; }
+  .nm { display: flex; align-items: center; gap: 9px; height: 34px; padding: 0 8px; border-radius: 10px; font-size: 16.5px; font-weight: 600; color: #33426A; }
+  .grp.r .nm { flex-direction: row-reverse; }
+  .nm i { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; color: #fff; font: 800 10.5px Inter, system-ui; font-style: normal; flex: none; }
+  .nm.on { background: #fff; box-shadow: 0 4px 14px rgba(11,27,69,.10); color: #0B1B45; }
+  .nm.q i { background: #fff !important; color: #F59E0B; border: 2px dashed #F59E0B; }
+  .play { left: 40px; right: 40px; top: 766px; height: 92px; display: flex; align-items: center; padding: 0 22px; gap: 10px; }
+  .play h4 { width: 130px; flex: none; }
+  .st { flex: 1; display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 650; }
+  .st small { display: block; font-size: 14px; font-weight: 500; color: #6B7A9E; }
+  .st .num { background: #DCE6FA; color: #1450D9; }
+  .st.on .num { background: #1450D9; color: #fff; }
+  .prog { position: absolute; left: 192px; right: 22px; bottom: 12px; height: 4px; border-radius: 4px; background: #E6EDFB; overflow: hidden; }
+  .prog i { display: block; height: 100%; background: linear-gradient(90deg, #4A86F7, #1450D9); }
+  #feed { left: 40px; top: 878px; width: 492px; height: 312px; padding: 20px 22px; overflow: hidden; }
+  #feed .win { position: absolute; left: 22px; right: 22px; top: 56px; bottom: 16px; overflow: hidden; -webkit-mask: linear-gradient(transparent, #000 14%, #000 86%, transparent); }
+  #rows { position: absolute; left: 0; right: 0; top: 0; }
+  .fr { display: flex; align-items: center; gap: 12px; height: 58px; border-bottom: 1px solid #EEF2FB; }
+  .fr .av { width: 32px; height: 32px; border-radius: 50%; background: #DCE5F7; flex: none; }
+  .fr .tx { font-size: 16px; font-weight: 600; flex: 1; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .fr .tg { font-size: 13px; font-weight: 800; padding: 4px 9px; border-radius: 7px; flex: none; }
+  .fr.bad .tx { color: #9AA6C2; text-decoration: line-through; text-decoration-color: #F87171; }
+  .fr.bad .tg { background: #FEE2E2; color: #DC2626; }
+  .fr.good .tg { background: #DCFCE7; color: #15803D; }
+  .fr.good .av { background: linear-gradient(135deg, #4A86F7, #1450D9); }
+  #ask { left: 548px; top: 878px; width: 492px; height: 312px; padding: 20px 22px; }
+  #ask .big { font-size: 34px; font-weight: 800; letter-spacing: -.02em; margin: 10px 0 4px; }
+  #ask .big em { font-style: normal; color: #1450D9; }
+  #ask p { margin: 0 0 16px; font-size: 17px; color: #6B7A9E; }
+  .box { border: 1.5px solid #CFDBF5; border-radius: 14px; padding: 12px 14px; font-size: 17px; min-height: 76px; background: #F8FAFF; }
+  .box .ph { color: #9AA6C2; }
+  .box .cur { display: inline-block; width: 2px; height: 19px; background: #1450D9; vertical-align: -3px; }
+  .btnrow { display: flex; align-items: center; gap: 10px; margin-top: 12px; }
+  .stack { display: flex; }
+  .stack i { width: 30px; height: 30px; border-radius: 50%; border: 2px solid #fff; margin-left: -8px; }
+  .stack i:first-child { margin-left: 0; }
+  .btnrow small { color: #6B7A9E; font-size: 14px; }
+  .post { margin-left: auto; background: #1450D9; color: #fff; font-weight: 700; font-size: 16px; padding: 8px 18px; border-radius: 999px; }
+</style>
+</head>
+<body>
+  <div class="top"><div class="mark"></div><div class="word">Dreamstate</div><div class="pill">My GTM shortlist</div></div>
+  <h1>GTM people I<br><em>actually learn from</em></h1>
+  <p class="sub">No recycled playbooks. <b>They build what they post.</b></p>
+
+  <svg class="layer" id="hero"></svg>
+  <div id="grps"></div>
+
+  <div class="card play">
+    <h4>How I use them</h4>
+    <div class="st"><span class="num">1</span><div>Follow<small>turn on the bell</small></div></div>
+    <div class="st"><span class="num">2</span><div>Steal the thinking<small>not the template</small></div></div>
+    <div class="st"><span class="num">3</span><div>Test it<small>on our own pipeline</small></div></div>
+    <div class="st"><span class="num">4</span><div>Keep what works<small>drop the rest</small></div></div>
+    <div class="prog"><i id="progbar"></i></div>
+  </div>
+
+  <div class="card" id="feed">
+    <h4>Your feed, filtered</h4>
+    <div class="win"><div id="rows"></div></div>
+  </div>
+
+  <div class="card" id="ask">
+    <h4>Your turn</h4>
+    <div class="big">Who did I <em>miss?</em></div>
+    <p>Drop one name and what you learned from them.</p>
+    <div class="box" id="box"></div>
+    <div class="btnrow">
+      <div class="stack"><i style="background:#1450D9"></i><i style="background:#7C3AED"></i><i style="background:#0EA5E9"></i><i style="background:#F59E0B"></i></div>
+      <small>+ your pick</small>
+      <span class="post" id="postbtn">Comment</span>
+    </div>
+  </div>
+
+  <div class="foot">
+    <div class="brand"><div class="mark"></div>Dreamstate <span class="url">trydreamstate.com</span></div>
+    <div class="cta"><span class="ring" id="ring"></span>Tag one name I missed <kbd>↓</kbd></div>
+  </div>
+
+<script src="../template/scene.js"></script>
+<script>
+const { L, TAU, clamp, ease, frac, lerp } = S;
+const CX = 540, CY = 566;
+const RINGS = [
+  { title: 'GTM Engineering', note: '3 people', col: '#1450D9', rx: 136, dir: 1, side: 'l', top: 330,
+    people: ['Fivos Aresti', 'Jordan Crawford', 'Dan Rosenthal'] },
+  { title: 'Outbound', note: '3 people', col: '#7C3AED', rx: 186, dir: -1, side: 'l', top: 520,
+    people: ['Scott Leese', 'Nate Nasralla', 'Matt Green'] },
+  { title: 'Content → pipeline', note: '2 people', col: '#0EA5E9', rx: 234, dir: 1, side: 'r', top: 330,
+    people: ['Dave Gerhardt', 'Sara Stella Lattanzio'] },
+  { title: 'GTM Strategy', note: '1 + you', col: '#F59E0B', rx: 276, dir: -1, side: 'r', top: 500,
+    people: ['Kyle Poyar', '?'] },
+];
+const initials = (n) => n === '?' ? '?' : n.split(' ').filter((w, i, a) => i === 0 || i === a.length - 1).map((w) => w[0]).join('');
+const TILT = 0.44;
+
+const grps = document.getElementById('grps');
+RINGS.forEach((g, gi) => {
+  const d = document.createElement('div');
+  d.className = 'grp' + (g.side === 'r' ? ' r' : '');
+  d.style.top = g.top + 'px';
+  d.style[g.side === 'l' ? 'left' : 'right'] = '30px';
+  d.innerHTML = `<div class="hd"><span class="num" style="background:${g.col}">${gi + 1}</span><span>${g.title}<br><small>${g.note}</small></span></div>` +
+    g.people.map((p) => `<div class="nm${p === '?' ? ' q' : ''}"><i style="background:${g.col}">${initials(p)}</i><span>${p === '?' ? 'Your pick goes here' : p}</span></div>`).join('');
+  grps.appendChild(d); g.el = d; g.rows = [...d.querySelectorAll('.nm')];
+});
+
+// Feed rows (two copies for a seamless scroll).
+const FEED = [
+  ['bad', '5 steps to 10x your pipeline 🚀', 'Recycled'],
+  ['good', 'The list scoring we run every Monday', 'Built it'],
+  ['bad', 'Cold email is dead. Here is why.', 'Recycled'],
+  ['good', 'Our reply flow, screenshot by screenshot', 'Built it'],
+  ['bad', 'Agree? 👇 Repost if you agree', 'Bait'],
+  ['good', 'What broke when we doubled send volume', 'Built it'],
+];
+const rows = document.getElementById('rows');
+rows.innerHTML = [...FEED, ...FEED].map(([c, tx, tg]) => `<div class="fr ${c}"><span class="av"></span><span class="tx">${tx}</span><span class="tg">${tg}${c === 'good' ? ' ✓' : ''}</span></div>`).join('');
+
+const stars = (() => { const r = S.rng(11), a = []; for (let i = 0; i < 70; i++) a.push([r(), r(), r(), r()]); return a; })();
+
+S.scenes.push((t) => {
+  let back = '', front = '', mid = '';
+  const defs = `<defs>
+    <radialGradient id="core" cx="35%" cy="30%" r="75%"><stop offset="0" stop-color="#9CC2FF"/><stop offset=".45" stop-color="#3B78F2"/><stop offset="1" stop-color="#0B2A7A"/></radialGradient>
+    <radialGradient id="halo"><stop offset="0" stop-color="#4A86F7" stop-opacity=".35"/><stop offset="1" stop-color="#4A86F7" stop-opacity="0"/></radialGradient>
+    <filter id="sh" x="-50%" y="-50%" width="200%" height="200%"><feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#0B1B45" flood-opacity=".25"/></filter></defs>`;
+  stars.forEach(([a, b, c, d]) => {
+    const ang = TAU * (a + (t / L) * (d < 0.5 ? 1 : -1));
+    const rx = 90 + b * 210;
+    const x = CX + Math.cos(ang) * rx, y = CY + Math.sin(ang) * rx * TILT + (c - 0.5) * 30;
+    const tw = 0.25 + 0.5 * Math.abs(Math.sin(TAU * (t / 4 + d)));
+    const h = `<circle cx="${x.toFixed(1)}" cy="${y.toFixed(1)}" r="${(1 + c * 1.6).toFixed(1)}" fill="#4A86F7" opacity="${tw.toFixed(2)}"/>`;
+    if (Math.sin(ang) > 0) front += h; else back += h;
+  });
+  const avs = [], flights = [];
+  RINGS.forEach((g, gi) => {
+    const ry = g.rx * TILT;
+    back += `<path d="M${CX - g.rx},${CY} A${g.rx},${ry} 0 0 1 ${CX + g.rx},${CY}" fill="none" stroke="${g.col}" stroke-opacity=".35" stroke-width="2"/>`;
+    front += `<path d="M${CX + g.rx},${CY} A${g.rx},${ry} 0 0 1 ${CX - g.rx},${CY}" fill="none" stroke="${g.col}" stroke-opacity=".6" stroke-width="2.5" stroke-dasharray="2 7" stroke-dashoffset="${g.dir * t * 20}"/>`;
+    const n = g.people.length;
+    g.people.forEach((p, i) => {
+      const th = TAU * (g.dir * t / L + i / n + gi * 0.13);
+      const x = CX + Math.cos(th) * g.rx, y = CY + Math.sin(th) * ry;
+      const depth = Math.sin(th);
+      const lit = depth > 0.82;
+      g.rows[i].classList.toggle('on', lit);
+      avs.push({ x, y, depth, p, g, lit });
+      if (depth > 0.55) flights.push({ x, y, f: clamp((depth - 0.55) / 0.45), col: g.col });
+    });
+  });
+  mid += `<circle cx="${CX}" cy="${CY}" r="110" fill="url(#halo)"/>`;
+  for (let k = 0; k < 2; k++) {
+    const f = frac(t / 2 + k / 2);
+    mid += `<ellipse cx="${CX}" cy="${CY}" rx="${56 + f * 70}" ry="${(56 + f * 70) * 0.9}" fill="none" stroke="#4A86F7" stroke-width="2" opacity="${(1 - f) * 0.45}"/>`;
+  }
+  mid += `<circle cx="${CX}" cy="${CY}" r="${54 + Math.sin(TAU * t / 2) * 2}" fill="url(#core)"/>`;
+  mid += `<circle cx="${CX}" cy="${CY}" r="18" fill="none" stroke="#fff" stroke-width="5" stroke-dasharray="85 30" transform="rotate(${t / L * 360} ${CX} ${CY})"/>`;
+  mid += `<text x="${CX}" y="${CY - 66}" text-anchor="middle" font-size="13" font-weight="800" letter-spacing="1.5" fill="#1450D9" font-family="Inter,system-ui">OUR PIPELINE</text>`;
+  let fl = '';
+  flights.forEach(({ x, y, f, col }) => {
+    for (let k = 0; k < 3; k++) {
+      const ff = clamp(f - k * 0.12);
+      if (ff <= 0) continue;
+      const px = lerp(x, CX, ease(ff)), py = lerp(y, CY, ease(ff)) - Math.sin(Math.PI * ff) * 30;
+      fl += `<circle cx="${px.toFixed(1)}" cy="${py.toFixed(1)}" r="${4 - k}" fill="${col}" opacity="${((1 - ff) * 0.9).toFixed(2)}"/>`;
+    }
+  });
+  let ab = '', af = '';
+  avs.sort((a, b) => a.depth - b.depth).forEach((a) => {
+    const sc = 0.72 + 0.28 * (a.depth + 1) / 2;
+    const r = 23 * sc, op = 0.55 + 0.45 * (a.depth + 1) / 2;
+    const q = a.p === '?';
+    let h = `<g opacity="${op.toFixed(2)}" filter="url(#sh)"><circle cx="${a.x.toFixed(1)}" cy="${a.y.toFixed(1)}" r="${r.toFixed(1)}" fill="${q ? '#fff' : a.g.col}" stroke="${q ? a.g.col : '#fff'}" stroke-width="${q ? 2.5 : 3}" ${q ? 'stroke-dasharray="4 4"' : ''}/>` +
+      `<text x="${a.x.toFixed(1)}" y="${(a.y + 5 * sc).toFixed(1)}" text-anchor="middle" font-size="${(14 * sc).toFixed(1)}" font-weight="800" fill="${q ? a.g.col : '#fff'}" font-family="Inter,system-ui">${initials(a.p)}</text></g>`;
+    if (a.lit) h += `<circle cx="${a.x.toFixed(1)}" cy="${a.y.toFixed(1)}" r="${(r + 7).toFixed(1)}" fill="none" stroke="${a.g.col}" stroke-width="2" opacity=".5"/>`;
+    if (a.depth < 0) ab += h; else af += h;
+  });
+  let ld = '';
+  RINGS.forEach((g) => {
+    const hd = g.el.querySelector('.num').getBoundingClientRect();
+    const gr = g.el.getBoundingClientRect();
+    const ax = g.side === 'l' ? gr.right + 4 : gr.left - 4;
+    const ay = hd.top + 14;
+    const ex = g.side === 'l' ? CX - g.rx : CX + g.rx;
+    ld += `<path d="M${ax},${ay} L${ex},${ay} L${ex},${CY}" fill="none" stroke="${g.col}" stroke-opacity=".4" stroke-width="1.6" stroke-dasharray="3 4"/><circle cx="${ex}" cy="${CY}" r="4.5" fill="${g.col}"/>`;
+  });
+  document.getElementById('hero').innerHTML = defs + ld + back + ab + mid + fl + front + af;
+
+  const pf = frac(t / L);
+  document.getElementById('progbar').style.width = (pf * 100).toFixed(1) + '%';
+  document.querySelectorAll('.st').forEach((el, k) => el.classList.toggle('on', pf >= k / 4));
+
+  rows.style.transform = `translateY(${-frac(t / L) * 58 * 6}px)`;
+
+  const full = 'Add ______. They taught me ______.';
+  const n = Math.floor(clamp((t - 0.8) / 3.2) * full.length);
+  const box = document.getElementById('box');
+  if (t < 0.8) box.innerHTML = '<span class="ph">Add a comment…</span>' + (frac(t * 2) < 0.5 ? '<span class="cur"></span>' : '');
+  else box.innerHTML = full.slice(0, n) + (frac(t * 2) < 0.5 || t < 4 ? '<span class="cur"></span>' : '');
+  box.style.opacity = t > 7.5 ? 1 - (t - 7.5) / 0.5 : 1;
+  const pb = document.getElementById('postbtn');
+  const pressed = t > 4.6 && t < 7.5;
+  pb.style.background = pressed ? '#22C55E' : '#1450D9';
+  pb.textContent = pressed ? 'Posted ✓' : 'Comment';
+  pb.style.transform = t > 4.5 && t < 4.65 ? 'scale(.92)' : 'none';
+
+  const rf = frac(t / 2), ring = document.getElementById('ring');
+  ring.style.transform = `scale(${1 + rf * 0.08}, ${1 + rf * 0.4})`;
+  ring.style.opacity = (1 - rf) * 0.8;
+});
+</script>
+</body>
+</html>

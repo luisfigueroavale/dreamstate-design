@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>Post 3 v2: Signals brain</title>
+<!-- Dark scene. Row 1: expectation (one clean line) vs reality (20 jittering tools, badges, tangled wires).
+     Hero: a particle brain. Eight signal sources stream into it, each arrival fires a wave through the mesh,
+     and the brain outputs one next move. Bottom: next move card, $7 vs ~$50 cost bars, own-the-stack checklist. -->
+<link rel="stylesheet" href="../template/base.css">
+<style>
+  .card h4 .k { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: rgba(156,194,255,.2); margin-right: 8px; letter-spacing: 0; }
+  #exp, #real { top: 300px; width: 492px; height: 200px; padding: 18px 20px; }
+  #exp { left: 40px; } #real { left: 548px; }
+  .cap { position: absolute; left: 20px; right: 20px; bottom: 14px; font-size: 16px; color: #9DB0D8; }
+  .cap b { color: #EAF1FF; }
+  #real .cap b { color: #FCA5A5; }
+  .chip { position: absolute; width: 214px; white-space: nowrap; height: 46px; display: flex; align-items: center; gap: 10px; padding: 0 12px; border-radius: 14px; background: rgba(14,30,78,.85); border: 1px solid rgba(156,194,255,.25); font-size: 16px; font-weight: 650; }
+  .chip.r { flex-direction: row-reverse; text-align: right; }
+  .chip i { width: 26px; height: 26px; border-radius: 8px; display: grid; place-items: center; font: 800 13px Inter, system-ui; font-style: normal; color: #fff; flex: none; }
+  .chip.on { border-color: #9CC2FF; box-shadow: 0 0 0 4px rgba(74,134,247,.18), 0 0 24px rgba(74,134,247,.35); }
+  .lab3 { position: absolute; top: 520px; left: 0; right: 0; text-align: center; }
+  .lab3 span { font-size: 15px; font-weight: 800; letter-spacing: .14em; color: #9CC2FF; background: rgba(74,134,247,.14); border: 1px solid rgba(156,194,255,.3); padding: 6px 14px; border-radius: 999px; }
+  #brain { position: absolute; left: 0; top: 0; width: 1080px; height: 1350px; }
+  #next { left: 40px; right: 40px; top: 916px; height: 112px; padding: 18px 22px; display: flex; align-items: center; gap: 18px; }
+  #next .ic { width: 58px; height: 58px; border-radius: 16px; background: linear-gradient(135deg, #4A86F7, #1450D9); display: grid; place-items: center; font-size: 28px; flex: none; box-shadow: 0 0 24px rgba(74,134,247,.5); }
+  #next .mv { flex: 1; overflow: hidden; height: 64px; position: relative; }
+  #next .mv div { position: absolute; left: 0; right: 0; }
+  #next .mv small { display: block; font-size: 14px; font-weight: 700; letter-spacing: .12em; color: #9CC2FF; }
+  #next .mv b { display: block; font-size: 23px; font-weight: 750; margin-top: 4px; }
+  #next .mv b span { color: #9CC2FF; }
+  #next .yes { font-size: 16px; font-weight: 750; padding: 9px 16px; border-radius: 999px; border: 1.5px solid #FBBF24; color: #FBBF24; flex: none; }
+  #next .yes.ok { border-color: #4ADE80; color: #052E16; background: #4ADE80; }
+  #cost, #stack { top: 1044px; width: 492px; height: 150px; padding: 16px 20px; }
+  #cost { left: 40px; } #stack { left: 548px; }
+  .bar { display: flex; align-items: center; gap: 12px; margin-top: 12px; font-size: 16px; font-weight: 650; }
+  .bar .nm { width: 96px; color: #9DB0D8; }
+  .bar .tr { flex: 1; height: 26px; border-radius: 8px; background: rgba(255,255,255,.06); position: relative; overflow: hidden; }
+  .bar .tr i { position: absolute; left: 0; top: 0; bottom: 0; border-radius: 8px; }
+  .bar .v { width: 92px; text-align: right; font-size: 22px; font-weight: 800; }
+  .ck { display: flex; gap: 10px; margin-top: 14px; }
+  .ck div { flex: 1; height: 50px; border-radius: 12px; border: 1px solid rgba(156,194,255,.22); display: flex; align-items: center; justify-content: center; gap: 8px; font-size: 17px; font-weight: 700; color: #9DB0D8; }
+  .ck div.on { color: #EAF1FF; border-color: #4ADE80; background: rgba(74,222,128,.10); }
+  .ck div i { font-style: normal; color: #4ADE80; opacity: 0; }
+  .ck div.on i { opacity: 1; }
+  #stack p { margin: 10px 0 0; font-size: 15px; color: #9DB0D8; }
+</style>
+</head>
+<body class="dark">
+  <canvas id="brain" width="1080" height="1350"></canvas>
+  <div class="top"><div class="mark"></div><div class="word">Dreamstate</div><div class="pill">Signals in 2026</div></div>
+  <h1>Signals need <em>one brain,</em><br>not 20 tabs</h1>
+  <p class="sub">Expectation · Reality · <b>What actually wins</b></p>
+
+  <div class="card" id="exp"><h4><span class="k">1</span>Expectation</h4><svg id="expsvg" width="452" height="110" style="position:absolute;left:20px;top:52px"></svg><div class="cap"><b>One visit, one form, one meeting.</b> If only.</div></div>
+  <div class="card" id="real"><h4><span class="k">2</span>Reality</h4><svg id="realsvg" width="452" height="112" style="position:absolute;left:20px;top:46px"></svg><div class="cap"><b>20 tools · 20 logins</b> · one Zapier chain, held by hope</div></div>
+
+  <div class="lab3"><span>3 · DREAMSTATE: ONE BRAIN</span></div>
+  <div id="chips"></div>
+
+  <div class="card" id="next">
+    <div class="ic">⚡</div>
+    <div class="mv" id="mv"></div>
+    <div class="yes" id="yes">Waiting on your yes</div>
+  </div>
+  <div class="card" id="cost">
+    <h4>Cost to run one customer / month</h4>
+    <div class="bar"><span class="nm">Dreamstate</span><span class="tr"><i id="b1" style="background:linear-gradient(90deg,#4A86F7,#9CC2FF)"></i></span><span class="v" id="v1">$7</span></div>
+    <div class="bar"><span class="nm">Others</span><span class="tr"><i id="b2" style="background:linear-gradient(90deg,#7F1D1D,#F87171)"></i></span><span class="v" id="v2" style="color:#FCA5A5">~$50</span></div>
+  </div>
+  <div class="card" id="stack">
+    <h4>We own the whole stack</h4>
+    <div class="ck"><div><i>✓</i>Data</div><div><i>✓</i>Outreach</div><div><i>✓</i>Posting</div></div>
+    <p>No duct-taped vendors in the middle.</p>
+  </div>
+
+  <div class="foot">
+    <div class="brand"><div class="mark"></div>Dreamstate <span class="url">trydreamstate.com</span></div>
+    <div class="cta"><span class="ring" id="ring"></span>Collecting is easy. <kbd>Acting</kbd> wins.</div>
+  </div>
+
+<script src="../template/scene.js"></script>
+<script>
+const { L, TAU, clamp, ease, frac, lerp, rng } = S;
+const BX = 540, BY = 712;
+
+const SRC = [
+  { t: 'Website visit', g: 'W', c: '#0EA5E9', side: 'l', y: 572 },
+  { t: 'Pricing page', g: '$', c: '#22C55E', side: 'l', y: 640 },
+  { t: 'Job change', g: '↗', c: '#A855F7', side: 'l', y: 708 },
+  { t: 'Funding round', g: '◆', c: '#F59E0B', side: 'l', y: 776 },
+  { t: 'Hiring SDRs', g: 'H', c: '#EC4899', side: 'r', y: 572 },
+  { t: 'Post engagement', g: 'in', c: '#0A66C2', side: 'r', y: 640 },
+  { t: 'Ad click', g: '●', c: '#EF4444', side: 'r', y: 708 },
+  { t: 'Tech install', g: '⚙', c: '#14B8A6', side: 'r', y: 776 },
+];
+const chips = document.getElementById('chips');
+SRC.forEach((s) => {
+  const d = document.createElement('div');
+  d.className = 'chip' + (s.side === 'r' ? ' r' : '');
+  d.style.top = s.y - 23 + 'px';
+  d.style[s.side === 'l' ? 'left' : 'right'] = '40px';
+  d.innerHTML = `<i style="background:${s.c}">${s.g}</i>${s.t}`;
+  chips.appendChild(d); s.el = d;
+});
+
+// Brain point cloud: union of lobes, rejection sampled, plus nearest-neighbour mesh.
+const R = rng(3);
+const inBrain = (x, y) => {
+  const e = (cx, cy, rx, ry) => ((x - cx) / rx) ** 2 + ((y - cy) / ry) ** 2 < 1;
+  return e(0, 0, 165, 100) || e(-70, -18, 110, 92) || e(60, -20, 115, 88) || e(105, 70, 62, 38);
+};
+const N = [];
+while (N.length < 520) {
+  const x = (R() - 0.5) * 360, y = (R() - 0.5) * 230;
+  if (inBrain(x, y) && y < 105) N.push({ x: BX + x, y: BY - 20 + y, ph: R(), r: 1 + R() * 1.8 });
+}
+const E = [];
+N.forEach((a, i) => {
+  N.map((b, j) => [j, (a.x - b.x) ** 2 + (a.y - b.y) ** 2]).filter(([j, dd]) => j !== i && dd < 900)
+    .sort((p, q) => p[1] - q[1]).slice(0, 3).forEach(([j]) => { if (j > i) E.push([i, j]); });
+});
+const GY = [];
+for (let k = 0; k < 9; k++) {
+  const y0 = -70 + k * 17; let pts = [];
+  for (let x = -150; x <= 150; x += 6) {
+    const y = y0 + Math.sin(x / 18 + k * 1.7) * 8;
+    if (inBrain(x, y)) pts.push([BX + x, BY - 20 + y]); else if (pts.length) { GY.push(pts); pts = []; }
+  }
+  if (pts.length) GY.push(pts);
+}
+SRC.forEach((s, i) => {
+  const ang = s.side === 'l' ? Math.PI - (i - 1.5) * 0.32 : (i - 5.5) * 0.32;
+  s.ex = BX + Math.cos(ang) * 150; s.ey = BY - 20 + Math.sin(ang) * 85;
+});
+const stars = []; { const r = rng(9); for (let i = 0; i < 120; i++) stars.push([r() * 1080, r() * 1350, r(), r()]); }
+
+const ctx = document.getElementById('brain').getContext('2d');
+const LOBES = [[0, 0, 165, 100], [-70, -18, 110, 92], [60, -20, 115, 88], [105, 70, 62, 38]];
+const sil = document.createElement('canvas'); sil.width = 1080; sil.height = 1350;
+{ const c = sil.getContext('2d'), ox = BX, oy = BY - 20;
+  const fill = (col) => { c.fillStyle = col; LOBES.forEach(([x, y, rx, ry]) => { c.beginPath(); c.ellipse(ox + x, oy + y, rx, ry, 0, 0, TAU); c.fill(); }); };
+  c.save(); c.beginPath(); c.rect(0, 0, 1080, oy + 105); c.clip();
+  c.lineWidth = 6; c.strokeStyle = 'rgba(156,194,255,.55)';
+  LOBES.forEach(([x, y, rx, ry]) => { c.beginPath(); c.ellipse(ox + x, oy + y, rx, ry, 0, 0, TAU); c.stroke(); });
+  c.globalCompositeOperation = 'destination-out'; fill('#000');
+  c.globalCompositeOperation = 'source-over';
+  const gr = c.createRadialGradient(ox - 30, oy - 40, 10, ox, oy, 200); gr.addColorStop(0, 'rgba(74,134,247,.22)'); gr.addColorStop(1, 'rgba(20,80,217,.08)');
+  fill(gr);
+  c.strokeStyle = 'rgba(156,194,255,.35)'; c.lineWidth = 2; c.beginPath(); c.moveTo(ox - 150, oy + 18); c.bezierCurveTo(ox - 60, oy - 10, ox + 30, oy + 40, ox + 120, oy + 20); c.stroke();
+  c.restore(); }
+const PER = 4, TRAV = 1.3;
+function bez(p0, p1, p2, p3, f) {
+  const u = 1 - f;
+  return [u * u * u * p0[0] + 3 * u * u * f * p1[0] + 3 * u * f * f * p2[0] + f * f * f * p3[0],
+          u * u * u * p0[1] + 3 * u * u * f * p1[1] + 3 * u * f * f * p2[1] + f * f * f * p3[1]];
+}
+
+const tools = []; { const r = rng(21); const cols = ['#EF4444','#F59E0B','#22C55E','#0EA5E9','#A855F7','#EC4899','#14B8A6','#64748B','#0A66C2','#F97316'];
+  for (let i = 0; i < 20; i++) tools.push({ x: 12 + (i % 10) * 44, y: 6 + Math.floor(i / 10) * 46, c: cols[i % 10], ph: r(), g: 'ABCDEFGHJKMNPRSTUVWZ'[i], b: 1 + Math.floor(r() * 9), bt: r() }); }
+const wires = []; { const r = rng(5); for (let i = 0; i < 16; i++) { const a = tools[Math.floor(r() * 20)], b = tools[Math.floor(r() * 20)]; wires.push([a, b, (r() - .5) * 120, (r() - .5) * 80, r()]); } }
+
+const MOVES = [
+  ['Champion changed jobs', 'intro email drafted'],
+  ['Raised a Series A', 'sequence queued'],
+  ['Viewed pricing twice', 'LinkedIn note drafted'],
+  ['Hiring 3 SDRs', 'added to Tier 1 list'],
+];
+
+S.scenes.push((t) => {
+  ctx.clearRect(0, 0, 1080, 1350);
+  stars.forEach(([x, y, a, b]) => {
+    ctx.globalAlpha = 0.15 + 0.5 * Math.abs(Math.sin(TAU * (t / L * (1 + Math.floor(b * 2)) + a)));
+    ctx.fillStyle = '#BFD6FF';
+    ctx.fillRect(x, y, 1.6, 1.6);
+  });
+  ctx.globalAlpha = 1;
+  const g = ctx.createRadialGradient(BX, BY - 20, 20, BX, BY - 20, 260);
+  g.addColorStop(0, 'rgba(74,134,247,.35)'); g.addColorStop(1, 'rgba(74,134,247,0)');
+  ctx.fillStyle = g; ctx.fillRect(BX - 300, BY - 300, 600, 560);
+
+  const waves = [];
+  SRC.forEach((s, i) => {
+    const ph = frac((t + i * PER / 8) / PER) * PER;
+    s.flow = ph;
+    let dt = ph - TRAV; if (dt < 0) dt += PER;
+    if (dt < 1.4) waves.push({ x: s.ex, y: s.ey, r: dt * 230, a: 1 - dt / 1.4 });
+    s.el.classList.toggle('on', ph < TRAV);
+  });
+  N.forEach((n) => {
+    let v = 0;
+    for (const w of waves) { const d = Math.hypot(n.x - w.x, n.y - w.y); v += w.a * Math.exp(-((d - w.r) ** 2) / 300); }
+    n.a = Math.min(v, 1);
+  });
+  ctx.drawImage(sil, 0, 0);
+  ctx.lineWidth = 1.6; ctx.strokeStyle = 'rgba(156,194,255,.28)';
+  GY.forEach((p) => { ctx.beginPath(); p.forEach(([x, y], k) => (k ? ctx.lineTo(x, y) : ctx.moveTo(x, y))); ctx.stroke(); });
+  ctx.lineWidth = 1;
+  E.forEach(([i, j]) => {
+    const a = (N[i].a + N[j].a) / 2;
+    ctx.strokeStyle = `rgba(${Math.round(lerp(90, 200, a))},${Math.round(lerp(140, 225, a))},255,${(0.12 + a * 0.6).toFixed(2)})`;
+    ctx.beginPath(); ctx.moveTo(N[i].x, N[i].y); ctx.lineTo(N[j].x, N[j].y); ctx.stroke();
+  });
+  N.forEach((n) => {
+    const tw = 0.35 + 0.35 * Math.sin(TAU * (t / 2 + n.ph));
+    ctx.globalAlpha = Math.min(1, Math.max(0, tw + n.a));
+    ctx.fillStyle = n.a > 0.3 ? '#FFFFFF' : '#9CC2FF';
+    ctx.beginPath(); ctx.arc(n.x, n.y, n.r + n.a * 2, 0, TAU); ctx.fill();
+  });
+  ctx.globalAlpha = 1;
+
+  SRC.forEach((s) => {
+    const cr = s.el.getBoundingClientRect();
+    const sx = s.side === 'l' ? cr.right : cr.left, sy = cr.top + 23;
+    const p0 = [sx, sy], p3 = [s.ex, s.ey];
+    const p1 = [lerp(sx, s.ex, 0.45), sy], p2 = [lerp(sx, s.ex, 0.55), s.ey];
+    ctx.strokeStyle = 'rgba(156,194,255,.22)'; ctx.lineWidth = 1.5; ctx.setLineDash([4, 6]); ctx.lineDashOffset = -t * 30;
+    ctx.beginPath(); ctx.moveTo(...p0); ctx.bezierCurveTo(...p1, ...p2, ...p3); ctx.stroke(); ctx.setLineDash([]);
+    if (s.flow < TRAV) {
+      for (let k = 0; k < 6; k++) {
+        const f = ease(clamp(s.flow / TRAV - k * 0.035));
+        const [x, y] = bez(p0, p1, p2, p3, f);
+        ctx.globalAlpha = (1 - k / 6) * 0.95; ctx.fillStyle = s.c;
+        ctx.beginPath(); ctx.arc(x, y, 5 - k * 0.6, 0, TAU); ctx.fill();
+      }
+      ctx.globalAlpha = 1;
+    }
+  });
+
+  const mi = Math.floor(t / 2) % 4, mf = frac(t / 2);
+  const oy0 = BY + 80, oy1 = 916;
+  ctx.strokeStyle = 'rgba(156,194,255,.25)'; ctx.lineWidth = 2;
+  ctx.beginPath(); ctx.moveTo(BX, oy0); ctx.lineTo(BX, oy1); ctx.stroke();
+  if (mf < 0.45) {
+    const f = ease(mf / 0.45), y = lerp(oy0, oy1, f);
+    const gg = ctx.createLinearGradient(0, y - 60, 0, y);
+    gg.addColorStop(0, 'rgba(156,194,255,0)'); gg.addColorStop(1, 'rgba(201,220,255,1)');
+    ctx.strokeStyle = gg; ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.moveTo(BX, Math.max(oy0, y - 60)); ctx.lineTo(BX, y); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(BX, y, 5, 0, TAU); ctx.fill();
+  }
+
+  const prev = MOVES[(mi + 3) % 4], cur = MOVES[mi];
+  const sl = ease(clamp((mf - 0.4) / 0.15));
+  const row = (m) => `<small>NEXT MOVE · SIGNAL → ACTION</small><b>${m[0]} <span>→ ${m[1]}</span></b>`;
+  document.getElementById('mv').innerHTML =
+    `<div style="top:${-sl * 64}px;opacity:${1 - sl}">${row(prev)}</div><div style="top:${(1 - sl) * 64}px;opacity:${sl}">${row(cur)}</div>`;
+  const yes = document.getElementById('yes');
+  const ok = mf > 0.75;
+  yes.classList.toggle('ok', ok);
+  yes.textContent = ok ? 'Approved ✓' : 'Waiting on your yes';
+
+  const ef = frac(t / 4);
+  const nodes = [[40, 'Visit'], [226, 'Form'], [412, 'Meeting']];
+  let es = `<line x1="40" y1="40" x2="412" y2="40" stroke="rgba(156,194,255,.35)" stroke-width="3"/>`;
+  const dx = lerp(40, 412, ease(clamp(ef / 0.75)));
+  es += `<line x1="40" y1="40" x2="${dx}" y2="40" stroke="#9CC2FF" stroke-width="3"/>`;
+  nodes.forEach(([x, lb]) => {
+    const on = dx >= x - 1;
+    es += `<circle cx="${x}" cy="40" r="17" fill="${on ? '#1450D9' : '#0E1E4E'}" stroke="${on ? '#9CC2FF' : 'rgba(156,194,255,.4)'}" stroke-width="2.5"/>` +
+          `<text x="${x}" y="46" text-anchor="middle" font-size="15" fill="#fff" font-weight="800">${on ? '✓' : ''}</text>` +
+          `<text x="${x}" y="84" text-anchor="middle" font-size="16" fill="${on ? '#EAF1FF' : '#9DB0D8'}" font-weight="650" font-family="Inter,system-ui">${lb}</text>`;
+  });
+  es += `<circle cx="${dx}" cy="40" r="6" fill="#fff" opacity="${ef < 0.75 ? 1 : 0}"/>`;
+  document.getElementById('expsvg').innerHTML = es;
+
+  let rs = '';
+  wires.forEach(([a, b, ox, oy, ph]) => {
+    const fl = 0.15 + 0.35 * Math.abs(Math.sin(TAU * (t / 2 + ph)));
+    rs += `<path d="M${a.x + 17},${a.y + 17} C${a.x + 17 + ox},${a.y + oy} ${b.x + 17 - ox},${b.y + 34 - oy} ${b.x + 17},${b.y + 17}" fill="none" stroke="${ph > 0.6 ? '#F87171' : '#9DB0D8'}" stroke-width="1.5" opacity="${fl.toFixed(2)}"/>`;
+  });
+  tools.forEach((o) => {
+    const jx = Math.sin(TAU * (t * 2 + o.ph)) * 1.6, jy = Math.cos(TAU * (t * 1.5 + o.ph)) * 1.6;
+    rs += `<rect x="${o.x + jx}" y="${o.y + jy}" width="34" height="34" rx="9" fill="${o.c}" opacity=".9"/><text x="${o.x + 17 + jx}" y="${o.y + 23 + jy}" text-anchor="middle" font-size="14" font-weight="800" fill="#fff" font-family="Inter,system-ui">${o.g}</text>`;
+    const bf = frac(t / 4 + o.bt);
+    if (bf < 0.5) {
+      const sc = bf < 0.08 ? bf / 0.08 : 1;
+      rs += `<circle cx="${o.x + 32 + jx}" cy="${o.y + 2 + jy}" r="${8 * sc}" fill="#EF4444" stroke="#0E1E4E" stroke-width="2"/><text x="${o.x + 32 + jx}" y="${o.y + 6 + jy}" text-anchor="middle" font-size="${10 * sc}" font-weight="800" fill="#fff" font-family="Inter,system-ui">${o.b}</text>`;
+    }
+  });
+  document.getElementById('realsvg').innerHTML = rs;
+
+  const cg = ease(clamp((t - 0.3) / 1.4)), fade = t > 7.5 ? 1 - (t - 7.5) / 0.5 : 1;
+  document.getElementById('b1').style.width = (cg * 14 * fade) + '%';
+  document.getElementById('b2').style.width = (cg * 100 * fade) + '%';
+  document.getElementById('v1').textContent = '$' + Math.round(7 * cg);
+  document.getElementById('v2').textContent = '~$' + Math.round(50 * cg);
+  document.querySelectorAll('.ck div').forEach((el, k) => el.classList.toggle('on', t > 1.6 + k * 0.7 && t < 7.6));
+
+  const rf = frac(t / 2), ring = document.getElementById('ring');
+  ring.style.transform = `scale(${1 + rf * 0.08}, ${1 + rf * 0.4})`;
+  ring.style.opacity = (1 - rf) * 0.8;
+});
+</script>
+</body>
+</html>

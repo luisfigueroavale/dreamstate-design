@@ -9,10 +9,10 @@
 ## Never commit
 
 - `brand.local/`, `audience.local/`, `.banned-terms.local`
-- `work/`, renders, frames, `.blend` files, GIF and MP4 exports
+- `work/`, renders, frames, `.blend` files, GIF and MP4 exports (except the skill examples below)
 - Downloaded assets or generated models
 
-The only images in git are the small grey `preview.png` in each scene folder.
+Images in git are the small grey `preview.png` in each scene folder and small example GIFs and stills shipped inside a skill folder, kept under about 1.5 MB each. Exports under `work/` stay uncommitted.
 
 ## A new 3D scene
 
@@ -23,7 +23,7 @@ The only images in git are the small grey `preview.png` in each scene folder.
 
 ## Copied 2D material
 
-`2d/gtm-team/` and `2d/funnel/` are copies. Change the original repo first, then copy it again and update the commit in `2d/README.md`.
+`2d/gtm-team/` and the eight original funnel visual skills are copies. Change the original repo first, then copy it again and update the commit in `2d/README.md`. `2d/funnel/skills/viral-gif-studio/` originates here. Keep the short Related pointer in the `animate-process` copy when refreshing it; copy that pointer back to the funnel original.
 
 ## Checks
 
