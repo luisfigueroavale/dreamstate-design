@@ -122,6 +122,6 @@ Collecting signals is easy. Acting on all of them from one place wins the deal.
 
 ## Notes for the owner
 - Post 1 claims "16 Grok Bots" from the repo README. Check you want the repo shared publicly as the giveaway.
-- Post 2 names people from Veronika Nikolaieva's list (220 reactions, 50 comments). Tim Scheuer is left out on purpose. Do not carry over tag prompts. Publishing or attaching still needs Luis's yes on that exact item.
+- Post 2 names people from Veronika Nikolaieva's list (220 reactions, 50 comments). Do not carry over tag prompts. Publishing or attaching still needs Luis's yes on that exact item.
 - Post 3 uses the $7 vs $50 margin and "own the whole infra" from the meeting notes. Confirm you're fine making the margin public.
 - Palette is a draft from trydreamstate.com (blue gradient, white, Inter). brand.local/ is still blank.
